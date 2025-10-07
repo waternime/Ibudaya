@@ -1,0 +1,328 @@
+/* Sidebar desktop (LIGHT MODE default) */
+.sidebar {
+    width: 240px;
+    background: #f9f9f9; /* terang */
+    color: #111;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 60; /* lebih tinggi dari header z-50 */
+}
+
+.sidebar a {
+    color: #111;
+    text-decoration: none;
+    display: block;
+    margin: 8px 0;
+}
+
+.sidebar a:hover {
+    color: #1abc9c;
+}
+
+/* Logo di sidebar */
+.sidebar .logo {
+    display: block;
+    margin-bottom: 20px;
+}
+
+/* Konten utama */
+.main-content {
+    margin-left: 240px;
+    padding: 20px;
+}
+
+/* Header mobile (LIGHT MODE default) */
+.mobile-header {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background: #f1f1f1;
+    color: #111;
+}
+
+.mobile-header .menu-toggle {
+    font-size: 28px;
+    background: none;
+    border: none;
+    color: #111;
+    cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%); /* sembunyi */
+        position: fixed;
+        z-index: 1000;
+    }
+
+    .sidebar.active {
+        transform: translateX(0); /* muncul */
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .mobile-header {
+        display: flex;
+    }
+}
+
+/* ===================== */
+/* Dark Mode Override    */
+/* ===================== */
+.dark-mode {
+    background: #121212;
+    color: #e0e0e0;
+}
+
+.dark-mode header {
+    background: #1e1e1e;
+    border-color: #333;
+}
+
+.dark-mode .sidebar {
+    background: #1a1a1a;
+    border-color: #333;
+}
+
+.dark-mode .sidebar a {
+    color: #ccc;
+}
+
+.dark-mode .sidebar a:hover {
+    color: #1abc9c;
+}
+
+.dark-mode .main-content {
+    background: #181818;
+}
+
+.dark-mode .mobile-header {
+    background: #222;
+    color: #fff;
+}
+
+/* === Global background & text === */
+body.dark-mode {
+    background: #121212;
+    color: #e0e0e0;
+}
+
+/* === Header === */
+body.dark-mode header {
+    background: #1e1e1e !important;
+    border-color: #333 !important;
+}
+
+body.dark-mode header input[type="text"] {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-mode header button {
+    background: #2a2a2a;
+    color: #e0e0e0;
+}
+
+/* Override card post agar ikut dark mode */
+body.dark-mode .mb-10.border.rounded-lg.shadow.bg-white.overflow-hidden {
+    background: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+/* Override bagian yang pakai text-gray */
+body.dark-mode .text-gray-700 {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .text-gray-400 {
+    color: #aaa !important;
+}
+
+/* Override background abu2 */
+body.dark-mode .bg-gray-100,
+body.dark-mode .bg-gray-200 {
+    background: #2a2a2a !important;
+}
+
+/* Card di Postingan Populer */
+body.dark-mode .border.rounded-lg.shadow.bg-white.overflow-hidden {
+    background: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+/* Override teks abu-abu di populer */
+body.dark-mode .text-gray-600,
+body.dark-mode .text-gray-500 {
+    color: #ccc !important;
+}
+
+body.dark-mode .text-gray-400 {
+    color: #aaa !important;
+}
+
+/* === Tombol Buat === */
+body.dark-mode a[href*="upload"] {
+    background: #2a2a2a !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
+
+/* === Sidebar === */
+body.dark-mode .sidebar {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+body.dark-mode .sidebar a {
+    color: #ccc;
+}
+
+body.dark-mode .sidebar a:hover {
+    color: #1abc9c;
+}
+
+/* Card Dokumen / Video / Gambar */
+body.dark-mode .mb-10.border.rounded-lg.shadow.bg-white {
+    background: #1e1e1e !important; /* abu gelap */
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+/* Background cover (gambar dokumen) */
+body.dark-mode .bg-gray-100,
+body.dark-mode .bg-gray-200 {
+    background: #2a2a2a !important;
+}
+
+/* Header post di card (yang border bawah) */
+body.dark-mode .border-b {
+    border-color: #333 !important;
+}
+
+/* Tombol action (download / preview) */
+body.dark-mode a.bg-blue-600 {
+    background: #2563eb !important; /* blue-600 */
+    color: #fff !important;
+}
+body.dark-mode a.bg-gray-600 {
+    background: #4b5563 !important; /* gray-600 */
+    color: #fff !important;
+}
+
+/* === FORM UPLOAD (Upload Postingan) === */
+body.dark-mode .max-w-2xl.mx-auto.bg-white.shadow.p-6.rounded {
+    background: #1e1e1e !important; /* ganti putih jadi gelap */
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+/* Input & select */
+body.dark-mode input[type="text"],
+body.dark-mode input[type="file"],
+body.dark-mode select {
+    background: #2a2a2a !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #444 !important;
+}
+
+/* Placeholder & hint */
+body.dark-mode input::placeholder {
+    color: #aaa !important;
+}
+body.dark-mode .text-gray-500 {
+    color: #bbb !important;
+}
+
+/* Alert sukses */
+body.dark-mode .bg-green-100 {
+    background: #163d2a !important; /* hijau gelap */
+    color: #b2f5ea !important;
+    border-color: #2f855a !important;
+}
+
+/* Tombol upload */
+body.dark-mode button.bg-blue-600 {
+    background: #2563eb !important;
+    color: #fff !important;
+}
+body.dark-mode button.bg-blue-600:hover {
+    background: #1d4ed8 !important;
+}
+
+/* === PERATURAN PENGGUNA === */
+body.dark-mode .max-w-3xl.mx-auto.bg-white.shadow.rounded-lg.p-6 {
+    background: #1e1e1e !important;  /* dari putih ke gelap */
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+/* List item warna abu biar lebih kontras */
+body.dark-mode ul.list-disc li {
+    color: #ccc !important;
+}
+
+/* Judul */
+body.dark-mode h2 {
+    color: #fff !important;
+}
+
+/* Teks tambahan */
+body.dark-mode p {
+    color: #ddd !important;
+}
+
+/* === EDIT PROFILE === */
+body.dark-mode .container input[type="password"],
+body.dark-mode .container input[type="text"],
+body.dark-mode .container input[type="file"] {
+    background: #2a2a2a !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #444 !important;
+}
+
+body.dark-mode .container label {
+    color: #ccc !important;
+}
+
+body.dark-mode .container .text-red-600 {
+    color: #ff6b6b !important; /* biar error tetap terlihat */
+}
+
+/* ===================== */
+/* Perbaikan Sidebar & Header */
+/* ===================== */
+
+/* Desktop: sidebar mulai di bawah header */
+@media (min-width: 768px) {
+    .sidebar {
+        top: 64px; /* tinggi header */
+        height: calc(100vh - 64px);
+        z-index: 40; /* biar header tetap di atas */
+    }
+
+    .main-content {
+        margin-left: 240px; /* kasih ruang sidebar */
+    }
+}
+
+/* Mobile: sidebar nutup layar penuh */
+@media (max-width: 768px) {
+    .sidebar {
+        top: 0;
+        height: 100vh;
+        z-index: 1000; /* biar di atas header */
+    }
+}

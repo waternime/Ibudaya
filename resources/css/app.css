@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Wrapper biar notif sejajar */
+.notifications-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* Kotak notif */
+.notification-card {
+    flex: 1;
+    min-width: 200px;
+    max-width: 250px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #2c2c2c; /* default gelap */
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease-in-out;
+}
+
+.notification-card:hover {
+    transform: translateY(-3px);
+}
+
+/* Kalau notif belum dibaca */
+.notification-card.unread {
+    border: 2px solid #0d6efd; /* biru bootstrap */
+}
+
+/* Waktu notif */
+.notification-card .time {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #bbb;
+}
+
+/*Video*/
+video {
+    display: block;
+    width: 100%;
+    max-height: 400px;
+}
