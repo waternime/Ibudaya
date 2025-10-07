@@ -55,7 +55,7 @@
                         🔔
                     </a>
 
-                    <a href="{{ route('dashboard') }}" class="w-9 h-9 rounded-full overflow-hidden border border-gray-300">
+                    <a href="{{ route('profile') }}" class="w-9 h-9 rounded-full overflow-hidden border border-gray-300">
                         <img src="{{ Auth::user()->profile_picture 
                                     ? asset('storage/'.Auth::user()->profile_picture) 
                                     : asset('images/default-avatar.png') }}" 
@@ -96,7 +96,7 @@
                 <a href="{{ route('notifications') }}" class="px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-sm">
                     🔔 Notifikasi
                 </a>
-                <a href="{{ route('dashboard') }}" 
+                <a href="{{ route('profile') }}" 
                 class="flex items-center gap-2 px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-sm">
                     <img src="{{ Auth::user()->profile_picture 
                                 ? asset('storage/'.Auth::user()->profile_picture) 

@@ -18,6 +18,6 @@ class DashboardController extends Controller
                      ->latest()
                      ->get();
 
-        return view('dashboard', compact('posts'));
+        return view('profile', compact('posts'));
     }
 }

@@ -80,7 +80,7 @@
     @forelse($posts as $post)
         <div class="mb-10 border rounded-lg shadow bg-white overflow-hidden">
 
-            {{-- Header post --}}
+            {{-- Header --}}
             <div class="flex items-center justify-between px-4 py-3 border-b">
                 <div>
                     <p class="font-semibold">{{ $post->title }}</p>
@@ -96,17 +96,16 @@
                 </span>
             </div>
 
-            {{-- Cek tipe file --}}
+            {{-- Konten Media --}}
             @php
                 $coverPath = $post->cover_path;
                 $filePath  = $post->file_path;
-                $isImage   = $filePath && \Illuminate\Support\Str::endsWith($filePath, ['jpg','jpeg','png','gif','webp']);
-                $isMusic   = $filePath && \Illuminate\Support\Str::endsWith($filePath, ['mp3','wav','ogg']);
-                $isVideo   = $filePath && \Illuminate\Support\Str::endsWith($filePath, ['mp4','webm']);
-                $isDoc     = $filePath && \Illuminate\Support\Str::endsWith($filePath, ['pdf','doc','docx','xls','xlsx','ppt','pptx']);
+                $isImage   = $filePath && Str::endsWith($filePath, ['jpg','jpeg','png','gif','webp']);
+                $isMusic   = $filePath && Str::endsWith($filePath, ['mp3','wav','ogg']);
+                $isVideo   = $filePath && Str::endsWith($filePath, ['mp4','webm']);
+                $isDoc     = $filePath && Str::endsWith($filePath, ['pdf','doc','docx','xls','xlsx','ppt','pptx']);
             @endphp
 
-            {{-- Cover --}}
             @if ($coverPath && !$isVideo)
                 <div class="w-full bg-gray-100">
                     <img src="{{ asset('storage/' . $coverPath) }}" 
@@ -116,7 +115,6 @@
                 </div>
             @endif
 
-            {{-- File gambar --}}
             @if ($isImage)
                 <div class="w-full bg-gray-100">
                     <img src="{{ asset('storage/' . $filePath) }}" 
@@ -126,7 +124,6 @@
                 </div>
             @endif
 
-            {{-- Musik --}}
             @if ($isMusic)
                 <div class="px-4 py-3 border-b">
                     <button 
@@ -138,7 +135,6 @@
                 </div>
             @endif
 
-            {{-- Video --}}
             @if ($isVideo)
                 <div class="w-full bg-black border-b">
                     <video controls class="w-full" style="max-height:400px;">
@@ -148,14 +144,13 @@
                 </div>
             @endif
 
-            {{-- Dokumen --}}
             @if ($isDoc && $post->category === 'docs')
                 <div class="px-4 py-3 border-b flex gap-3">
                     <a href="{{ route('posts.download', $post->id) }}"
                        class="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
                         ⬇️ Download Dokumen
                     </a>
-                    @if (\Illuminate\Support\Str::endsWith($filePath, 'pdf'))
+                    @if (Str::endsWith($filePath, 'pdf'))
                         <a href="{{ route('posts.preview', $post->id) }}" target="_blank"
                            class="flex-1 text-center px-3 py-2 bg-gray-600 text-white text-sm rounded hover:bg-gray-700">
                             🔍 Preview
@@ -164,33 +159,28 @@
                 </div>
             @endif
 
-            {{-- Konten singkat --}}
+            {{-- Konten --}}
             @if($post->content)
                 <div class="px-4 py-3 text-sm text-gray-700 border-b">
                     {{ Str::limit($post->content, 200) }}
                 </div>
             @endif
 
-            {{-- Aksi --}}
-            <div class="px-4 py-3 text-lg">
+            {{-- Like & Komentar --}}
+            <div class="flex items-center gap-6 px-4 py-3 text-lg">
                 <p class="text-gray-400 text-xs mb-2">
                     Dibuat: {{ $post->created_at->diffForHumans() }}
                 </p>
-                <div class="flex items-center gap-6">
-                    {{-- Like --}}
-                    <form action="{{ route('posts.like', $post->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="flex items-center gap-2 hover:text-red-600">
-                            ❤️ <span>{{ $post->likes()->count() }}</span>
-                        </button>
-                    </form>
-                    {{-- Komentar --}}
-                    <a href="{{ route('posts.show', $post->id) }}" class="flex items-center gap-2 hover:text-green-600">
-                        💬 <span>{{ $post->comments()->count() }}</span>
-                    </a>
-                </div>
+                <form action="{{ route('posts.like', $post->id) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="flex items-center gap-2 hover:text-red-600 transition-colors duration-200">
+                        ❤️ <span>{{ $post->likes()->count() }}</span>
+                    </button>
+                </form>
+                <a href="{{ route('posts.show', $post->id) }}" class="flex items-center gap-2 hover:text-green-600 transition-colors duration-200">
+                    💬 <span>{{ $post->comments()->count() }}</span>
+                </a>
             </div>
-
         </div>
     @empty
         <p class="text-gray-500 text-center">Belum ada posting.</p>

@@ -519,3 +519,31 @@ body.dark-mode .sm\:hidden .bg-gray-100 {
 body.dark-mode #imageModal {
     background-color: rgba(0, 0, 0, 0.7);
 }
+
+/* ===================== */
+/* FIX: Musik Card (dark mode hover) */
+/* ===================== */
+
+.music-track {
+    transition: background 0.3s, color 0.3s;
+}
+
+/* Hover default (light mode) */
+.music-track:hover {
+    background: #f3f4f6; /* gray-100 */
+}
+
+/* Hover pas dark mode */
+body.dark-mode .music-track:hover {
+    background: #2a2a2a !important; /* gelap tapi beda dikit biar tetap kelihatan hover */
+    color: #e0e0e0 !important;
+}
+
+/* Teks dalam card biar tetap kontras */
+body.dark-mode .music-track h3 {
+    color: #fff !important;
+}
+
+body.dark-mode .music-track p {
+    color: #bbb !important;
+}

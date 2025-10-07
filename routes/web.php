@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/admin/posts/{id}', [PostManagementController::class, 'destroy'])->name('admin.posts.destroy');
 
     // Profil & Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [DashboardController::class, 'index'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::resource('posts', PostController::class)->except(['create', 'store', 'index']);
