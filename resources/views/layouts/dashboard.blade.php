@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indonesia Culture - @yield('title')</title>
+    <title>Ibudaya - @yield('title')</title>
     @vite(['resources/css/app.css', 'resources/css/comment.css', 'resources/css/menu.css', 'resources/js/app.js'])
     <link rel="icon" type="image/jpg" href="{{ asset('images/icon.jpg') }}">
 </head>
