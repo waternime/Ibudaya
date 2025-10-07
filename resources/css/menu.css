@@ -326,3 +326,196 @@ body.dark-mode .container .text-red-600 {
         z-index: 1000; /* biar di atas header */
     }
 }
+
+/* ===================== */
+/* Header & Search Fix    */
+/* ===================== */
+
+/* Pastikan form flex */
+header form {
+    display: flex;
+    width: 100%;
+    max-width: 500px; /* sesuaikan */
+}
+
+/* Input search */
+header form input[type="text"] {
+    flex: 1;
+    background: #fff;
+    color: #111;
+    border: 1px solid #ccc;
+    border-right: none; /* biar nyambung ke tombol */
+    border-top-left-radius: 9999px;
+    border-bottom-left-radius: 9999px;
+    height: 38px;
+    padding: 0 12px;
+    line-height: 1.2;
+    transition: background 0.3s, color 0.3s, border 0.3s;
+}
+
+/* Tombol search */
+header form button {
+    background: #f0f0f0;
+    color: #111;
+    border: 1px solid #ccc;
+    border-left: none; /* biar nyambung ke input */
+    border-top-right-radius: 9999px;
+    border-bottom-right-radius: 9999px;
+    height: 38px;
+    padding: 0 14px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, border 0.3s;
+}
+
+/* Placeholder */
+header form input::placeholder {
+    color: #888;
+}
+
+/* Hover & focus */
+header form input[type="text"]:focus {
+    outline: none;
+    border-color: #1abc9c;
+}
+
+header form button:hover {
+    background: #e2e2e2;
+}
+
+/* Dark mode overrides */
+body.dark-mode header form input[type="text"] {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+    border-right: none;
+}
+
+body.dark-mode header form button {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+    border-left: none;
+}
+
+body.dark-mode header form input::placeholder {
+    color: #aaa;
+}
+
+body.dark-mode header form button:hover {
+    background: #3a3a3a;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+    header form input[type="text"], 
+    header form button {
+        height: 36px;
+    }
+}
+
+/* ===================== */
+/* Dark Mode Admin Posts & Users */
+/* ===================== */
+
+/* Container utama */
+body.dark-mode .container {
+    background: #181818;
+    color: #e0e0e0;
+}
+
+/* Judul & paragraf */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode p {
+    color: #fff;
+}
+
+/* --------------------- */
+/* Form Pencarian / Search Bar */
+/* --------------------- */
+body.dark-mode form input[type="text"] {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+body.dark-mode form input::placeholder {
+    color: #aaa;
+}
+
+/* Override khusus tombol Like & Comment di feed */
+body.dark-mode .mb-10.border.rounded-lg.shadow.bg-white .flex.items-center.gap-6.px-4.py-3.text-lg button,
+body.dark-mode .mb-10.border.rounded-lg.shadow.bg-white .flex.items-center.gap-6.px-4.py-3.text-lg a {
+    background: transparent !important;
+    border: none !important;
+    color: inherit !important;
+}
+
+body.dark-mode form button:hover,
+body.dark-mode form a:hover {
+    background: #3a3a3a;
+}
+
+/* --------------------- */
+/* Tabel Desktop Admin */
+/* --------------------- */
+body.dark-mode table {
+    background: #1e1e1e;
+    color: #e0e0e0;
+}
+
+body.dark-mode table th {
+    background: #2a2a2a;
+    color: #ccc;
+    border-color: #333;
+}
+
+body.dark-mode table td {
+    border-color: #333;
+    color: #e0e0e0;
+}
+
+body.dark-mode table tr:hover {
+    background: #2c2c2c;
+}
+
+/* Tombol Hapus di tabel */
+body.dark-mode button.bg-red-500 {
+    background: #b91c1c !important;
+    color: #fff !important;
+}
+
+body.dark-mode button.bg-red-500:hover {
+    background: #991b1b !important;
+}
+
+/* --------------------- */
+/* Card Mobile Admin (sm:hidden) */
+/* --------------------- */
+.sm\:hidden {
+    background: #fff; /* default light mode */
+    color: #111;
+    border-color: #ddd;
+}
+
+body.dark-mode .sm\:hidden {
+    background: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+body.dark-mode .sm\:hidden .bg-white {
+    background: #1e1e1e !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .sm\:hidden .bg-gray-100 {
+    background: #2a2a2a !important;
+    color: #ccc !important;
+}
+
+/* --------------------- */
+/* Modal Preview Gambar */
+body.dark-mode #imageModal {
+    background-color: rgba(0, 0, 0, 0.7);
+}

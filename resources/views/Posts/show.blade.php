@@ -26,56 +26,48 @@
         @endphp
 
         @if ($coverPath && !$isVideo)
-            <div class="w-full bg-gray-100">
-                <img src="{{ asset('storage/' . $coverPath) }}" alt="Cover {{ $post->title }}" class="w-full object-contain">
-            </div>
+            <img src="{{ asset('storage/' . $coverPath) }}" 
+                 class="w-full object-contain cursor-pointer"
+                 alt="Cover"
+                 onclick="openModal('{{ asset('storage/' . $coverPath) }}')">
         @endif
-
         @if ($isImage)
-            <div class="w-full bg-gray-100">
-                <img src="{{ asset('storage/' . $filePath) }}" alt="{{ $post->title }}" class="w-full object-contain">
-            </div>
+            <img src="{{ asset('storage/' . $filePath) }}" 
+                 class="w-full object-contain cursor-pointer"
+                 alt="Image"
+                 onclick="openModal('{{ asset('storage/' . $filePath) }}')">
         @endif
-
         @if ($isMusic)
             <div class="px-4 py-3 border-b">
-                <button class="music-track w-full text-center px-3 py-2 bg-purple-600 text-white text-sm rounded hover:bg-purple-700"
-                        data-src="{{ asset('storage/' . $filePath) }}" data-title="{{ $post->title }}">
+                <button class="music-track w-full px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                    data-src="{{ asset('storage/' . $filePath) }}" data-title="{{ $post->title }}">
                     🎵 Putar Musik
                 </button>
             </div>
         @endif
-
         @if ($isVideo)
-            <div class="w-full bg-black border-b">
-                <video controls class="w-full" style="max-height:400px;">
-                    <source src="{{ asset('storage/' . $filePath) }}" type="video/mp4">
-                    Browser Anda tidak mendukung pemutar video.
-                </video>
-            </div>
+            <video controls class="w-full max-h-[400px] bg-black">
+                <source src="{{ asset('storage/' . $filePath) }}">
+            </video>
         @endif
-
         @if ($isDoc && $post->category === 'docs')
             <div class="px-4 py-3 border-b flex gap-3">
-                <a href="{{ route('posts.download', $post->id) }}" class="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">⬇️ Download Dokumen</a>
+                <a href="{{ route('posts.download', $post->id) }}" class="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded">⬇️ Download</a>
                 @if (\Illuminate\Support\Str::endsWith($filePath, 'pdf'))
-                    <a href="{{ route('posts.preview', $post->id) }}" target="_blank" class="flex-1 text-center px-3 py-2 bg-gray-600 text-white text-sm rounded hover:bg-gray-700">🔍 Preview</a>
+                    <a href="{{ route('posts.preview', $post->id) }}" target="_blank" class="flex-1 text-center px-3 py-2 bg-gray-600 text-white text-sm rounded">🔍 Preview</a>
                 @endif
             </div>
         @endif
 
         @if($post->content)
-            <div class="px-4 py-3 text-sm text-gray-700 border-b">
-                {{ $post->content }}
-            </div>
+            <div class="px-4 py-3 text-sm text-gray-700 border-b">{{ $post->content }}</div>
         @endif
 
         {{-- Like & Comment --}}
         <div class="px-4 py-3 text-lg">
             <p class="text-gray-400 text-xs mb-2">Dibuat: {{ $post->created_at->diffForHumans() }}</p>
             <div class="flex items-center gap-6">
-                <form action="{{ route('posts.like', $post->id) }}" method="POST">
-                    @csrf
+                <form action="{{ route('posts.like', $post->id) }}" method="POST">@csrf
                     <button type="submit" class="flex items-center gap-2 hover:text-red-600">❤️ <span>{{ $post->likes()->count() }}</span></button>
                 </form>
                 <div class="flex items-center gap-2">💬 <span>{{ $post->comments()->count() }}</span></div>
@@ -87,118 +79,147 @@
     <div class="mb-10">
         <h3 class="text-lg font-semibold mb-3">💬 Komentar</h3>
 
+        {{-- Form tambah komentar --}}
+        @auth
+        <form action="{{ route('posts.comments.store', $post->id) }}" method="POST" class="mb-6 flex gap-2">
+            @csrf
+            <input type="text" name="content"
+                class="flex-1 px-3 py-2 border rounded comment-input dark:bg-gray-700 dark:text-white text-sm"
+                placeholder="Tulis komentar...">
+            <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">Kirim</button>
+        </form>
+        @else
+            <p class="text-gray-500 mb-4">Silakan
+                <a href="{{ route('login') }}" class="text-blue-500">login</a> untuk berkomentar.
+            </p>
+        @endauth
+
+        {{-- Fungsi render replies --}}
         @php
-            function renderReplies($comment) {
-                foreach($comment->replies as $reply) {
-                    echo '<div class="ml-8 mt-2 p-2 bg-gray-200 rounded">';
-                    echo '<strong>'.$reply->user->name.'</strong>';
-                    echo '<p class="text-sm">'.$reply->content.'</p>';
-                    echo '<small class="text-gray-400">'.$reply->created_at->diffForHumans().'</small>';
-
-                    echo '<div class="flex items-center gap-3 mt-1">';
-                    if(auth()->check()) {
-                        echo '<button onclick="document.getElementById(\'reply-form-'.$reply->id.'\').classList.toggle(\'hidden\')" class="text-green-600 text-sm hover:underline">Balas</button>';
-                        if(auth()->id() === $reply->user_id) {
-                            echo '<button onclick="document.getElementById(\'edit-form-'.$reply->id.'\').classList.toggle(\'hidden\')" class="text-yellow-600 text-sm hover:underline">Edit</button>';
-                            echo '<form action="'.route('comments.destroy', $reply->id).'" method="POST" class="inline">';
-                            echo csrf_field();
-                            echo method_field('DELETE');
-                            echo '<button type="submit" class="text-red-600 text-sm hover:underline">Hapus</button></form>';
+        function renderReplies($comment, $postId) {
+            foreach ($comment->replies as $reply) {
+                echo '<div class="ml-4 mt-3 p-3 rounded-lg border shadow-sm comment-reply">';
+                    echo '<div class="flex items-start gap-3">';
+                        if ($reply->user->profile_picture) {
+                            echo '<img src="'.asset('storage/'.$reply->user->profile_picture).'" class="w-8 h-8 rounded-full object-cover border">';
+                        } else {
+                            echo '<div class="w-8 h-8 flex items-center justify-center bg-gray-300 dark:bg-gray-600 rounded-full text-sm">👤</div>';
                         }
-                    }
+                        echo '<div class="flex-1">';
+                            echo '<p class="font-semibold text-sm">'.e($reply->user->name).'</p>';
+                            echo '<p class="text-sm">'.e($reply->content).'</p>';
+                            echo '<div class="flex items-center gap-3 text-xs mt-1">';
+                                echo $reply->created_at->diffForHumans();
+                                echo ' <button onclick="toggleElement(\'reply-form-'.$reply->id.'\')" class="text-green-600 dark:text-green-400">Balas</button>';
+                                if(auth()->id() === $reply->user_id) {
+                                    echo '<button onclick="toggleElement(\'edit-form-'.$reply->id.'\')" class="text-yellow-600 dark:text-yellow-400">Edit</button>';
+                                    echo '<form action="'.route('comments.destroy',$reply->id).'" method="POST" class="inline">'.csrf_field().method_field('DELETE').'<button class="text-red-600 dark:text-red-400">Hapus</button></form>';
+                                }
+                            echo '</div>';
+                        echo '</div>';
                     echo '</div>';
 
-                    // Form Reply
                     if(auth()->check()) {
-                        echo '<form id="reply-form-'.$reply->id.'" action="'.route('posts.comments.reply', [$reply->post_id, $reply->id]).'" method="POST" class="mt-2 flex gap-2 ml-4 hidden">';
+                        echo '<form id="reply-form-'.$reply->id.'" action="'.route('posts.comments.store',$postId).'" method="POST" class="hidden mt-2 flex gap-2 ml-4 items-center">';
                         echo csrf_field();
-                        echo '<input type="text" name="content" class="flex-1 px-2 py-1 border rounded" placeholder="Balas komentar...">';
-                        echo '<button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Kirim</button></form>';
+                        echo '<input type="hidden" name="parent_id" value="'.$comment->id.'">';
+                        echo '<input type="text" name="content" class="flex-1 px-3 py-2 border rounded comment-input dark:bg-gray-700 dark:text-white text-sm" placeholder="Balas komentar...">';
+                        echo '<button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">Kirim</button>';
+                        echo '</form>';
 
-                        if(auth()->id() === $reply->user_id) {
-                            echo '<form id="edit-form-'.$reply->id.'" action="'.route('comments.update', $reply->id).'" method="POST" class="mt-2 flex gap-2 ml-4 hidden">';
-                            echo csrf_field();
-                            echo method_field('PUT');
-                            echo '<input type="text" name="content" value="'.$reply->content.'" class="flex-1 px-2 py-1 border rounded">';
-                            echo '<button type="submit" class="px-3 py-1 bg-yellow-600 text-white rounded hover:bg-yellow-700">Simpan</button></form>';
-                        }
+                        echo '<form id="edit-form-'.$reply->id.'" action="'.route('comments.update',$reply->id).'" method="POST" class="hidden mt-2 flex gap-2 ml-4 items-center">';
+                        echo csrf_field().method_field('PUT');
+                        echo '<input type="text" name="content" value="'.e($reply->content).'" class="flex-1 px-3 py-2 border rounded comment-input dark:bg-gray-700 dark:text-white text-sm">';
+                        echo '<button class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 text-sm">Simpan</button>';
+                        echo '</form>';
                     }
 
-                    if($reply->replies->count() > 0) {
-                        renderReplies($reply);
-                    }
-
-                    echo '</div>';
-                }
+                echo '</div>';
             }
+        }
         @endphp
 
-        @if ($post->comments->whereNull('parent_id')->count() > 0)
-            @foreach($post->comments->whereNull('parent_id') as $comment)
-                <div class="mb-2 p-3 rounded bg-gray-100">
-                    <strong>{{ $comment->user->name }}</strong>
-                    <p class="text-sm">{{ $comment->content }}</p>
-                    <small class="text-gray-400">{{ $comment->created_at->diffForHumans() }}</small>
+        {{-- Komentar utama --}}
+        @forelse($post->comments->whereNull('parent_id') as $comment)
+            <div class="mb-4 p-4 rounded-lg border shadow-sm comment-box">
+                <div class="flex items-start gap-3">
+                    @if($comment->user->profile_picture)
+                        <img src="{{ asset('storage/' . $comment->user->profile_picture) }}" class="w-10 h-10 rounded-full object-cover border">
+                    @else
+                        <div class="w-10 h-10 flex items-center justify-center bg-gray-300 dark:bg-gray-600 rounded-full text-lg">👤</div>
+                    @endif
 
-                    <div class="flex items-center gap-3 mt-1">
-                        @auth
-                            @if($comment->replies->count() > 0)
-                                <button onclick="document.getElementById('replies-{{ $comment->id }}').classList.toggle('hidden')" class="text-blue-600 text-sm hover:underline">
-                                    Lihat Balasan ({{ $comment->replies->count() }})
-                                </button>
-                            @endif
-                            <button onclick="document.getElementById('reply-form-{{ $comment->id }}').classList.toggle('hidden')" class="text-green-600 text-sm hover:underline">Balas</button>
-
+                    <div class="flex-1">
+                        <p class="font-semibold">{{ $comment->user->name }}</p>
+                        <p class="text-sm">{{ $comment->content }}</p>
+                        <div class="flex items-center gap-3 text-xs mt-1">
+                            {{ $comment->created_at->diffForHumans() }}
+                            <button onclick="toggleElement('reply-form-{{ $comment->id }}')" class="text-green-600 dark:text-green-400">Balas</button>
                             @if(auth()->id() === $comment->user_id)
-                                <button onclick="document.getElementById('edit-form-{{ $comment->id }}').classList.toggle('hidden')" class="text-yellow-600 text-sm hover:underline">Edit</button>
-                                <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 text-sm hover:underline">Hapus</button>
+                                <button onclick="toggleElement('edit-form-{{ $comment->id }}')" class="text-yellow-600 dark:text-yellow-400">Edit</button>
+                                <form action="{{ route('comments.destroy',$comment->id) }}" method="POST" class="inline">
+                                    @csrf @method('DELETE')
+                                    <button class="text-red-600 dark:text-red-400">Hapus</button>
                                 </form>
                             @endif
-                        @endauth
-                    </div>
+                        </div>
 
-                    {{-- Form Reply --}}
-                    @auth
-                        <form id="reply-form-{{ $comment->id }}" action="{{ route('posts.comments.reply', [$post->id, $comment->id]) }}" method="POST" class="mt-2 flex gap-2 ml-4 hidden">
+                        {{-- Reply form --}}
+                        @auth
+                        <form id="reply-form-{{ $comment->id }}" action="{{ route('posts.comments.store',$post->id) }}" method="POST" class="hidden mt-2 flex gap-2 ml-4 items-center">
                             @csrf
-                            <input type="text" name="content" class="flex-1 px-2 py-1 border rounded" placeholder="Balas komentar...">
-                            <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Kirim</button>
+                            <input type="hidden" name="parent_id" value="{{ $comment->id }}">
+                            <input type="text" name="content"
+                                class="flex-1 px-3 py-2 border rounded comment-input dark:bg-gray-700 dark:text-white text-sm"
+                                placeholder="Balas komentar...">
+                            <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">Kirim</button>
                         </form>
 
-                        {{-- Form Edit --}}
-                        @if(auth()->id() === $comment->user_id)
-                            <form id="edit-form-{{ $comment->id }}" action="{{ route('comments.update', $comment->id) }}" method="POST" class="mt-2 flex gap-2 ml-4 hidden">
-                                @csrf
-                                @method('PUT')
-                                <input type="text" name="content" value="{{ $comment->content }}" class="flex-1 px-2 py-1 border rounded">
-                                <button type="submit" class="px-3 py-1 bg-yellow-600 text-white rounded hover:bg-yellow-700">Simpan</button>
-                            </form>
-                        @endif
-                    @endauth
+                        <form id="edit-form-{{ $comment->id }}" action="{{ route('comments.update',$comment->id) }}" method="POST" class="hidden mt-2 flex gap-2 ml-4 items-center">
+                            @csrf @method('PUT')
+                            <input type="text" name="content" value="{{ $comment->content }}"
+                                class="flex-1 px-3 py-2 border rounded comment-input dark:bg-gray-700 dark:text-white text-sm">
+                            <button class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 text-sm">Simpan</button>
+                        </form>
+                        @endauth
 
-                    {{-- Balasan --}}
-                    <div id="replies-{{ $comment->id }}" class="ml-8 mt-2 hidden">
-                        @php renderReplies($comment); @endphp
+                        {{-- Nested replies --}}
+                        @if($comment->replies->count() > 0)
+                            <button onclick="toggleElement('replies-{{ $comment->id }}')" class="text-xs text-blue-600 dark:text-blue-400 mt-2">Lihat Balasan ({{ $comment->replies->count() }})</button>
+                            <div id="replies-{{ $comment->id }}" class="hidden mt-2">
+                                @php renderReplies($comment, $post->id); @endphp
+                            </div>
+                        @endif
                     </div>
                 </div>
-            @endforeach
-        @else
+            </div>
+        @empty
             <p class="text-gray-500">Belum ada komentar.</p>
-        @endif
-
-        {{-- Form komentar utama --}}
-        @auth
-            <form action="{{ route('posts.comments.store', $post->id) }}" method="POST" class="mt-3 flex gap-2">
-                @csrf
-                <input type="text" name="content" class="flex-1 px-3 py-2 border rounded" placeholder="Tulis komentar...">
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Kirim</button>
-            </form>
-        @else
-            <p class="text-gray-500 mt-2">Silakan <a href="{{ route('login') }}">login</a> untuk berkomentar.</p>
-        @endauth
+        @endforelse
     </div>
+
+    {{-- Modal Preview Gambar --}}
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
+        <button class="absolute top-5 right-8 text-white text-3xl font-bold" onclick="closeModal()">❌</button>
+        <img id="modalImage" class="max-w-full max-h-[80vh] rounded shadow-lg object-contain">
+    </div>
+
+    <script>
+        function toggleElement(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden');
+        }
+        function openModal(src) {
+            document.getElementById('modalImage').src = src;
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    </script>
 </div>
 @endsection

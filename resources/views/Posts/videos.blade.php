@@ -1,4 +1,5 @@
 @extends('layouts.dashboard')
+@section('title', 'Video')
 
 @section('content')
 <div class="max-w-2xl mx-auto">
@@ -7,10 +8,21 @@
     @if ($posts->count() > 0)
         @foreach ($posts as $post)
             @if ($post->category === 'videos' && $post->file_path)
-                <div class="mb-10 border rounded-lg shadow bg-white">
+                <div class="mb-10 border rounded-lg shadow bg-white overflow-hidden">
                     {{-- Header Post --}}
                     <div class="flex items-center justify-between px-4 py-3 border-b">
-                        <p class="font-semibold">{{ $post->title }}</p>
+                        <div>
+                            <p class="font-semibold">{{ $post->title ?? 'Tanpa Judul' }}</p>
+                            <span class="text-xs text-gray-500 block">
+                                📌 {{ ucfirst($post->province) ?? 'Umum' }}
+                            </span>
+                            <span class="text-xs text-gray-500">
+                                🎭 {{ ucfirst($post->file_category) ?? 'Tidak ada kategori' }}
+                            </span>
+                        </div>
+                        <span class="text-xs px-2 py-1 bg-gray-200 rounded">
+                            🎬 Video
+                        </span>
                     </div>
 
                     {{-- Menampilkan Video --}}
@@ -30,7 +42,7 @@
                         </div>
                     @endif
 
-                    {{-- Like & Komentar (sejajar seperti di dokumen) --}}
+                    {{-- Like & Komentar --}}
                     <div class="flex items-center gap-6 px-4 py-3 text-lg">
                         <form action="{{ route('posts.like', $post->id) }}" method="POST">
                             @csrf
@@ -40,7 +52,7 @@
                         </form>
 
                         <a href="{{ route('posts.show', $post->id) }}" class="flex items-center gap-2 hover:text-green-600">
-                            💬 <span>{{ $post->comments_count ?? 0 }}</span>
+                            💬 <span>{{ $post->comments()->count() }}</span>
                         </a>
                     </div>
                 </div>

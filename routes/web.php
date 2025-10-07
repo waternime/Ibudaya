@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\PostManagementController;
 
-Route::get('/', function () {return redirect('home');});
-Route::get('/home', [DashboardController::class, 'home'])->name('welcome');
-Route::get('/tentang', [DashboardController::class, 'aboutus'])->name('aboutus');
+Route::get('/', function () {return redirect('/posts/latest');});
 Route::get('/posts/search', [App\Http\Controllers\PostController::class, 'search'])->name('posts.search');
 
  // Postingan

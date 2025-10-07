@@ -1,0 +1,126 @@
+/* === COMMENT SYSTEM === */
+
+/* Kotak komentar utama */
+.comment-box {
+    margin-bottom: 15px;
+    padding: 14px;
+    border-radius: 8px;
+    background: #f9fafb;  /* bg-gray-50 */
+    border: 1px solid #e0e0e0;
+    color: #111;
+}
+
+/* Metadata bar (nama + waktu) */
+.comment-meta {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    margin-bottom:6px;
+}
+.comment-author { font-weight:700; }
+.comment-time { font-size:12px; color:#666; }
+
+/* Teks komentar */
+.comment-content { margin-bottom:8px; color:inherit; }
+
+/* Aksi (Balas / Edit / Hapus / Lihat Balasan) */
+.comment-actions {
+    margin-top:6px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    font-size:13px;
+}
+.comment-actions .btn {
+    background:transparent;
+    border:none;
+    padding:0;
+    cursor:pointer;
+    font-weight:600;
+}
+.comment-actions .btn.reply { color:#059669; }   /* hijau */
+.comment-actions .btn.edit  { color:#d97706; }   /* kuning/orange */
+.comment-actions .btn.delete{ color:#dc2626; }   /* merah */
+.comment-actions .btn.toggle{ color:#2563eb; }   /* biru */
+.comment-actions .btn:hover { text-decoration:underline; }
+
+/* Container replies (indent) */
+.reply-list {
+    margin-top: 6px;
+    margin-left: 48px; /* sama dengan posisi teks komentar utama (jangan terlalu jauh) */
+}
+
+/* Box reply */
+.comment-reply {
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: #1f1f1f; /* dark mode */
+    border: 1px solid #333;
+    font-size: 14px;
+    color: #eaeaea;
+    margin-bottom: 8px;
+}
+
+.comment-reply .comment-author { font-weight:600; }
+
+/* Form kecil untuk reply / edit */
+.comment-form {
+    margin-top:8px;
+    display:flex;
+    gap:8px;
+}
+.comment-form .input {
+    flex:1;
+    padding:8px 10px;
+    border-radius:6px;
+    border:1px solid #cfcfcf;
+    background:#fff;
+    color:#111;
+}
+.comment-form .btn-blue   { background:#2563eb; color:#fff; padding:8px 12px; border-radius:6px; border:none; }
+.comment-form .btn-green  { background:#059669; color:#fff; padding:8px 12px; border-radius:6px; border:none; }
+.comment-form .btn-yellow { background:#d97706; color:#fff; padding:8px 12px; border-radius:6px; border:none; }
+
+/* Tombol lihat balasan */
+.toggle-replies {
+    color:#2563eb;
+    font-size:0.875rem;
+    cursor:pointer;
+}
+.toggle-replies:hover { text-decoration: underline; }
+
+/* Hidden khusus */
+.c-hidden { display:none !important; }
+
+/* === DARK MODE === */
+body.dark-mode .comment-box,
+body.dark-mode .comment-reply {
+    background:#1f1f1f;
+    border:1px solid #333;
+    color:#eaeaea;
+}
+
+body.dark-mode .comment-content,
+body.dark-mode .comment-reply p {
+    color:#d1d5db;
+}
+
+body.dark-mode .comment-time {
+    color:#9ca3af;
+}
+
+body.dark-mode .comment-form .input {
+    background:#2b2b2b;
+    border:1px solid #444;
+    color:#fff;
+}
+
+body.dark-mode .comment-actions .btn.reply  { color:#34d399; } /* hijau terang */
+body.dark-mode .comment-actions .btn.edit   { color:#fbbf24; } /* kuning terang */
+body.dark-mode .comment-actions .btn.delete { color:#f87171; } /* merah terang */
+body.dark-mode .comment-actions .btn.toggle { color:#60a5fa; } /* biru terang */
+
+/* Responsive tweak */
+@media (max-width:640px) {
+    .reply-list { margin-left:20px; }
+}

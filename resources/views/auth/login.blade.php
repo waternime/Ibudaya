@@ -1,35 +1,28 @@
 @extends('layouts.auth')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center 
-                bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 
-                relative overflow-hidden">
+<div class="flex min-h-screen">
+    {{-- Bagian kiri (form login) --}}
+    <div class="w-full md:w-1/3 flex items-start justify-center bg-white p-8">
+        <div class="w-full max-w-sm mt-10">
+            {{-- Logo di atas --}}
+            <img src="{{ asset('images/logo.png') }}" 
+                 alt="Indonesia Culture Logo" 
+                 class="w-96 h-auto mb-6">
 
-        <!-- Background motif batik -->
-        <div class="absolute inset-0 bg-[url('/images/batik-pattern.png')] 
-                    bg-repeat opacity-5"></div>
+            {{-- Judul --}}
+            <h1 class="text-3xl font-bold mb-2">Masuk</h1>
+            <p class="text-gray-600 mb-6">Silakan masuk untuk melanjutkan.</p>
 
-        <!-- Card -->
-        <div class="relative z-10 w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
-            
-            <!-- Logo & Tagline -->
-            <div class="text-center">
-                <img src="{{ asset('images/logoibudaya.png') }}" 
-                     class="h-32 mx-auto mb-3" 
-                     alt="iBudaya Logo">
-                <h2 class="text-2xl font-bold text-gray-800">Selamat Datang di iBudaya</h2>
-                <p class="text-gray-500 text-sm">Platform Digital Budaya Indonesia</p>
-            </div>
-
-            {{-- pesan sukses setelah register --}}
+            {{-- pesan sukses --}}
             @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
+                <div class="bg-green-100 text-green-700 p-2 rounded mb-3">{{ session('success') }}</div>
             @endif
 
             {{-- error login --}}
             @if ($errors->any())
-                <div class="alert alert-error">
-                    <ul>
+                <div class="bg-red-100 text-red-700 p-2 rounded mb-3">
+                    <ul class="list-disc list-inside">
                         @foreach ($errors->all() as $e)
                             <li>{{ $e }}</li>
                         @endforeach
@@ -39,62 +32,48 @@
 
             <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
+                <input type="email" name="email" placeholder="Email" 
+                       value="{{ old('email') }}" required autofocus
+                       class="w-full px-4 py-2 border rounded">
+                <input type="password" name="password" placeholder="Password" required
+                       class="w-full px-4 py-2 border rounded">
 
-                <!-- Email -->
-                <div class="relative">
-                    <input type="email" name="email" placeholder="Email" required
-                           class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 
-                                  focus:ring-2 focus:ring-amber-500 focus:border-amber-500 
-                                  text-sm">
-                    <svg class="w-5 h-5 absolute left-3 top-3.5 text-gray-400" 
-                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M16 12H8m8 0H8m4 4v-8"/>
-                    </svg>
-                </div>
-
-                <!-- Password -->
-                <div class="relative">
-                    <input type="password" name="password" placeholder="Password" required
-                           class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 
-                                  focus:ring-2 focus:ring-amber-500 focus:border-amber-500 
-                                  text-sm">
-                    <svg class="w-5 h-5 absolute left-3 top-3.5 text-gray-400" 
-                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M12 11c0-1.105.895-2 2-2s2 .895 2 2-2 2-2 2zm0 0c0-1.105-.895-2-2-2s-2 .895-2 2 2 2 2 2z"/>
-                    </svg>
-                </div>
-
-                <!-- Tombol Login -->
-                <button type="submit" 
-                        class="w-full bg-amber-600 text-white py-3 rounded-lg font-semibold 
-                               hover:bg-amber-700 hover:scale-[1.02] transition-all">
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded">
                     Login
                 </button>
 
-                <!-- Divider -->
-                <div class="flex items-center my-2">
-                    <hr class="flex-grow border-gray-300">
-                    <span class="px-2 text-gray-500 text-sm">atau</span>
-                    <hr class="flex-grow border-gray-300">
+                {{-- Link Lupa Password --}}
+                <div class="flex justify-end">
+                    <a href="{{ route('password.forgot') }}" class="text-blue-600 hover:underline text-sm">
+                        Lupa Password?
+                    </a>
                 </div>
 
-                <!-- Register -->
-                <a href="{{ route('register') }}" 
-                   class="block w-full text-center bg-amber-100 text-amber-700 py-3 
-                          rounded-lg font-medium hover:bg-amber-200 transition">
-                    Buat Akun Baru
-                </a>
-
-                <!-- Kembali -->
-                <a href="{{ url('/') }}" 
-                   class="block w-full text-center bg-green-500 text-white py-3 
-                          rounded-lg font-medium hover:bg-green-600 transition">
-                    Kembali ke Halaman Utama
-                </a>
+                <div class="flex flex-col gap-2 mt-2">
+                    <a href="{{ route('register') }}" class="text-blue-600 hover:underline">Buat Akun Baru</a>
+                    <a href="{{ route('posts.latest') }}" class="text-gray-600 hover:underline flex items-center gap-1">
+                        ⬅️ <span>Kembali</span>
+                    </a>
+                </div>
             </form>
         </div>
-    </section>
+    </div>
+
+    {{-- Bagian kanan (slideshow max 3 gambar) --}}
+    <div class="hidden md:flex md:w-2/3 relative" 
+         x-data="{ images: [
+            '{{ asset('images/banner1.jpg') }}',
+            '{{ asset('images/banner2.jpg') }}',
+            '{{ asset('images/banner3.jpg') }}'
+         ].filter(src => src !== ''), current: 0 }" 
+         x-init="if(images.length > 1) setInterval(() => current = (current + 1) % images.length, 4000)">
+
+        {{-- Loop gambar --}}
+        <template x-for="(src, index) in images" :key="index">
+            <img :src="src" 
+                 class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+                 :class="index === current ? 'opacity-100' : 'opacity-0'">
+        </template>
+    </div>
 </div>
 @endsection

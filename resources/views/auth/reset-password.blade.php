@@ -1,39 +1,63 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
-        @csrf
+@extends('layouts.auth')
 
-        <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+@section('content')
+<div class="flex min-h-screen">
+    {{-- Bagian kiri (form reset password) --}}
+    <div class="w-full md:w-1/3 flex items-center justify-center bg-gray-100 p-8">
+        <div class="w-full max-w-md bg-white p-8 rounded shadow">
+            <h1 class="text-2xl font-bold mb-4 text-center">Reset Password</h1>
+            <p class="text-gray-600 mb-6 text-center">Masukkan password baru Anda.</p>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            {{-- Status sukses --}}
+            @if(session('status'))
+                <div class="bg-green-100 text-green-700 p-2 rounded mb-4 text-center">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            {{-- Form reset password --}}
+            <form method="POST" action="{{ route('password.update', ['userId' => $userId]) }}" class="space-y-4">
+                @csrf
+                @method('PUT')
+
+                <div>
+                    <input type="password" name="password" placeholder="Password Baru" required
+                           class="w-full p-2 border rounded">
+                    @error('password')
+                        <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div>
+                    <input type="password" name="password_confirmation" placeholder="Konfirmasi Password" required
+                           class="w-full p-2 border rounded">
+                </div>
+
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white p-2 rounded">
+                    Ubah Password
+                </button>
+            </form>
+
+            <div class="mt-4 text-center">
+                <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Kembali ke Login</a>
+            </div>
         </div>
+    </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    {{-- Bagian kanan slideshow --}}
+    <div class="hidden md:flex md:w-2/3 relative"
+         x-data="{ images: [
+            '{{ asset('images/banner1.jpg') }}',
+            '{{ asset('images/banner2.jpg') }}',
+            '{{ asset('images/banner3.jpg') }}'
+         ].filter(src => src !== ''), current: 0 }"
+         x-init="if(images.length > 1) setInterval(() => current = (current + 1) % images.length, 4000)">
+        
+        <template x-for="(src, index) in images" :key="index">
+            <img :src="src"
+                 class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+                 :class="index === current ? 'opacity-100' : 'opacity-0'">
+        </template>
+    </div>
+</div>
+@endsection
