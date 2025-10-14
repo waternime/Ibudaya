@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
 
     // Notifikasi
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+    Route::delete('/notifications/clear', [NotificationController::class, 'clearAll'])->name('notifications.clear');
     Route::post('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])
         ->name('notifications.read');
 
