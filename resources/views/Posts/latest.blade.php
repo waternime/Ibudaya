@@ -166,20 +166,17 @@
                 </div>
             @endif
 
-            {{-- Like & Komentar --}}
-            <div class="flex items-center gap-6 px-4 py-3 text-lg">
-                <p class="text-gray-400 text-xs mb-2">
-                    Dibuat: {{ $post->created_at->diffForHumans() }}
-                </p>
-                <form action="{{ route('posts.like', $post->id) }}" method="POST">
-                    @csrf
-                    <button type="submit" class="flex items-center gap-2 hover:text-red-600 transition-colors duration-200">
-                        ❤️ <span>{{ $post->likes()->count() }}</span>
-                    </button>
-                </form>
-                <a href="{{ route('posts.show', $post->id) }}" class="flex items-center gap-2 hover:text-green-600 transition-colors duration-200">
+            {{-- Like & Comment --}}
+            <div class="px-4 py-3 text-lg">
+                <p class="text-gray-400 text-xs mb-2">Dibuat: {{ $post->created_at->diffForHumans() }}</p>
+                <div class="flex items-center gap-6">
+                    <form action="{{ route('posts.like', $post->id) }}" method="POST">@csrf
+                        <button type="submit" class="flex items-center gap-2 hover:text-red-600">❤️ <span>{{ $post->likes()->count() }}</span></button>
+                    </form>
+                    <a href="{{ route('posts.show', $post->id) }}" class="flex items-center gap-2 hover:text-green-600 transition-colors duration-200">
                     💬 <span>{{ $post->comments()->count() }}</span>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
     @empty
