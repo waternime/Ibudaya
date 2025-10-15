@@ -6,74 +6,97 @@
 <div class="max-w-2xl mx-auto">
     <h2 class="text-2xl font-bold mb-6 text-center">🆕 Postingan Terbaru</h2>
 
-    {{-- Filter Provinsi & Kategori Budaya --}}
-    <form method="GET" action="{{ route('posts.latest') }}" class="mb-6 grid grid-cols-2 gap-3">
-        {{-- Provinsi --}}
-        <select name="province" onchange="this.form.submit()" 
-                class="px-3 py-2 border rounded bg-white text-sm">
-            <option value="">🌍 Semua Provinsi</option>
-            <option value="__none__">-- Pilih Provinsi --</option>
-            <option value="Umum" {{ request('province') == 'Umum' ? 'selected' : '' }}>Umum / Nasional</option>
-            <option value="Aceh" {{ request('province') == 'Aceh' ? 'selected' : '' }}>Aceh</option>
-            <option value="Sumatera Utara" {{ request('province') == 'Sumatera Utara' ? 'selected' : '' }}>Sumatera Utara</option>
-            <option value="Sumatera Barat" {{ request('province') == 'Sumatera Barat' ? 'selected' : '' }}>Sumatera Barat</option>
-            <option value="Riau" {{ request('province') == 'Riau' ? 'selected' : '' }}>Riau</option>
-            <option value="Kepulauan Riau" {{ request('province') == 'Kepulauan Riau' ? 'selected' : '' }}>Kepulauan Riau</option>
-            <option value="Jambi" {{ request('province') == 'Jambi' ? 'selected' : '' }}>Jambi</option>
-            <option value="Sumatera Selatan" {{ request('province') == 'Sumatera Selatan' ? 'selected' : '' }}>Sumatera Selatan</option>
-            <option value="Bangka Belitung" {{ request('province') == 'Bangka Belitung' ? 'selected' : '' }}>Bangka Belitung</option>
-            <option value="Bengkulu" {{ request('province') == 'Bengkulu' ? 'selected' : '' }}>Bengkulu</option>
-            <option value="Lampung" {{ request('province') == 'Lampung' ? 'selected' : '' }}>Lampung</option>
-            <option value="DKI Jakarta" {{ request('province') == 'DKI Jakarta' ? 'selected' : '' }}>DKI Jakarta</option>
-            <option value="Jawa Barat" {{ request('province') == 'Jawa Barat' ? 'selected' : '' }}>Jawa Barat</option>
-            <option value="Banten" {{ request('province') == 'Banten' ? 'selected' : '' }}>Banten</option>
-            <option value="Jawa Tengah" {{ request('province') == 'Jawa Tengah' ? 'selected' : '' }}>Jawa Tengah</option>
-            <option value="DI Yogyakarta" {{ request('province') == 'DI Yogyakarta' ? 'selected' : '' }}>DI Yogyakarta</option>
-            <option value="Jawa Timur" {{ request('province') == 'Jawa Timur' ? 'selected' : '' }}>Jawa Timur</option>
-            <option value="Bali" {{ request('province') == 'Bali' ? 'selected' : '' }}>Bali</option>
-            <option value="Nusa Tenggara Barat" {{ request('province') == 'Nusa Tenggara Barat' ? 'selected' : '' }}>Nusa Tenggara Barat</option>
-            <option value="Nusa Tenggara Timur" {{ request('province') == 'Nusa Tenggara Timur' ? 'selected' : '' }}>Nusa Tenggara Timur</option>
-            <option value="Kalimantan Barat" {{ request('province') == 'Kalimantan Barat' ? 'selected' : '' }}>Kalimantan Barat</option>
-            <option value="Kalimantan Tengah" {{ request('province') == 'Kalimantan Tengah' ? 'selected' : '' }}>Kalimantan Tengah</option>
-            <option value="Kalimantan Selatan" {{ request('province') == 'Kalimantan Selatan' ? 'selected' : '' }}>Kalimantan Selatan</option>
-            <option value="Kalimantan Timur" {{ request('province') == 'Kalimantan Timur' ? 'selected' : '' }}>Kalimantan Timur</option>
-            <option value="Kalimantan Utara" {{ request('province') == 'Kalimantan Utara' ? 'selected' : '' }}>Kalimantan Utara</option>
-            <option value="Sulawesi Utara" {{ request('province') == 'Sulawesi Utara' ? 'selected' : '' }}>Sulawesi Utara</option>
-            <option value="Gorontalo" {{ request('province') == 'Gorontalo' ? 'selected' : '' }}>Gorontalo</option>
-            <option value="Sulawesi Tengah" {{ request('province') == 'Sulawesi Tengah' ? 'selected' : '' }}>Sulawesi Tengah</option>
-            <option value="Sulawesi Barat" {{ request('province') == 'Sulawesi Barat' ? 'selected' : '' }}>Sulawesi Barat</option>
-            <option value="Sulawesi Selatan" {{ request('province') == 'Sulawesi Selatan' ? 'selected' : '' }}>Sulawesi Selatan</option>
-            <option value="Sulawesi Tenggara" {{ request('province') == 'Sulawesi Tenggara' ? 'selected' : '' }}>Sulawesi Tenggara</option>
-            <option value="Maluku" {{ request('province') == 'Maluku' ? 'selected' : '' }}>Maluku</option>
-            <option value="Maluku Utara" {{ request('province') == 'Maluku Utara' ? 'selected' : '' }}>Maluku Utara</option>
-            <option value="Papua" {{ request('province') == 'Papua' ? 'selected' : '' }}>Papua</option>
-            <option value="Papua Barat" {{ request('province') == 'Papua Barat' ? 'selected' : '' }}>Papua Barat</option>
-            <option value="Papua Selatan" {{ request('province') == 'Papua Selatan' ? 'selected' : '' }}>Papua Selatan</option>
-            <option value="Papua Tengah" {{ request('province') == 'Papua Tengah' ? 'selected' : '' }}>Papua Tengah</option>
-            <option value="Papua Pegunungan" {{ request('province') == 'Papua Pegunungan' ? 'selected' : '' }}>Papua Pegunungan</option>
-        </select>
+    {{-- 🔹 Versi Mobile: Tombol Filter --}}
+    <div class="sm:hidden mb-4 text-center">
+        <button type="button" 
+                onclick="document.getElementById('mobileFilter').classList.toggle('hidden')"
+                class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold">
+            Filter Pronvinsi & Budaya
+        </button>
+    </div>
 
-        {{-- Kategori Budaya --}}
-        <select name="file_category" onchange="this.form.submit()" 
-                class="px-3 py-2 border rounded bg-white text-sm">
-            <option value="">🎭 Semua Kategori Budaya</option>
-            <option value="__none__">-- Pilih Kategori --</option>
-            <option value="pakaian_adat" {{ request('file_category') == 'pakaian_adat' ? 'selected' : '' }}>👘 Pakaian Adat</option>
-            <option value="upacara_adat" {{ request('file_category') == 'upacara_adat' ? 'selected' : '' }}>🙏 Upacara Adat</option>
-            <option value="makanan_khas" {{ request('file_category') == 'makanan_khas' ? 'selected' : '' }}>🍲 Makanan Khas</option>
-            <option value="lagu_daerah" {{ request('file_category') == 'lagu_daerah' ? 'selected' : '' }}>🎶 Lagu Daerah</option>
-            <option value="alat_musik" {{ request('file_category') == 'alat_musik' ? 'selected' : '' }}>🥁 Alat Musik Tradisional</option>
-            <option value="senjata_tradisional" {{ request('file_category') == 'senjata_tradisional' ? 'selected' : '' }}>⚔️ Senjata Tradisional</option>
-            <option value="alam" {{ request('file_category') == 'alam' ? 'selected' : '' }}>⛰️ Alam</option>
-            <option value="rumah_tradisional" {{ request('file_category') == 'rumah_tradisional' ? 'selected' : '' }}>🏠 Rumah Tradisional</option>
-            <option value="tari_tradisional" {{ request('file_category') == 'tari_tradisional' ? 'selected' : '' }}>💃 Tari Tradisional</option>
-            <option value="permainan_tradisional" {{ request('file_category') == 'permainan_tradisional' ? 'selected' : '' }}>🎮 Permainan Tradisional</option>
-            <option value="pertunjukan_daerah" {{ request('file_category') == 'pertunjukan_daerah' ? 'selected' : '' }}>🎭 Pertunjukan Daerah</option>
-            <option value="profil_daerah" {{ request('file_category') == 'profil_daerah' ? 'selected' : '' }}>📜 Profil Daerah</option>
-            <option value="cerita_rakyat" {{ request('file_category') == 'cerita_rakyat' ? 'selected' : '' }}>📖 Cerita Rakyat</option>
-            <option value="sejarah" {{ request('file_category') == 'sejarah' ? 'selected' : '' }}>📚 Sejarah</option>
-            <option value="event" {{ request('file_category') == 'event' ? 'selected' : '' }}>🎉 Kegiatan/Event</option>
-        </select>
+    {{-- 🔹 Filter Form --}}
+    <form method="GET" action="{{ route('posts.latest') }}" 
+          class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+
+        {{-- Wrapper agar bisa toggle di mobile --}}
+        <div id="mobileFilter" class="sm:contents hidden sm:block">
+
+            {{-- Provinsi --}}
+            <select name="province" onchange="this.form.submit()" 
+                    class="px-3 py-2 border rounded bg-white text-sm w-full">
+                <option value="">📌 Provinsi</option>
+                <option value="Umum" {{ request('province') == 'Umum' ? 'selected' : '' }}>Umum</option>
+                <option value="Aceh" {{ request('province') == 'Aceh' ? 'selected' : '' }}>Aceh</option>
+                <option value="Sumatera Utara" {{ request('province') == 'Sumatera Utara' ? 'selected' : '' }}>Sumatera Utara</option>
+                <option value="Sumatera Barat" {{ request('province') == 'Sumatera Barat' ? 'selected' : '' }}>Sumatera Barat</option>
+                <option value="Riau" {{ request('province') == 'Riau' ? 'selected' : '' }}>Riau</option>
+                <option value="Kepulauan Riau" {{ request('province') == 'Kepulauan Riau' ? 'selected' : '' }}>Kepulauan Riau</option>
+                <option value="Jambi" {{ request('province') == 'Jambi' ? 'selected' : '' }}>Jambi</option>
+                <option value="Sumatera Selatan" {{ request('province') == 'Sumatera Selatan' ? 'selected' : '' }}>Sumatera Selatan</option>
+                <option value="Bangka Belitung" {{ request('province') == 'Bangka Belitung' ? 'selected' : '' }}>Bangka Belitung</option>
+                <option value="Bengkulu" {{ request('province') == 'Bengkulu' ? 'selected' : '' }}>Bengkulu</option>
+                <option value="Lampung" {{ request('province') == 'Lampung' ? 'selected' : '' }}>Lampung</option>
+                <option value="DKI Jakarta" {{ request('province') == 'DKI Jakarta' ? 'selected' : '' }}>DKI Jakarta</option>
+                <option value="Jawa Barat" {{ request('province') == 'Jawa Barat' ? 'selected' : '' }}>Jawa Barat</option>
+                <option value="Banten" {{ request('province') == 'Banten' ? 'selected' : '' }}>Banten</option>
+                <option value="Jawa Tengah" {{ request('province') == 'Jawa Tengah' ? 'selected' : '' }}>Jawa Tengah</option>
+                <option value="DI Yogyakarta" {{ request('province') == 'DI Yogyakarta' ? 'selected' : '' }}>DI Yogyakarta</option>
+                <option value="Jawa Timur" {{ request('province') == 'Jawa Timur' ? 'selected' : '' }}>Jawa Timur</option>
+                <option value="Bali" {{ request('province') == 'Bali' ? 'selected' : '' }}>Bali</option>
+                <option value="Nusa Tenggara Barat" {{ request('province') == 'Nusa Tenggara Barat' ? 'selected' : '' }}>Nusa Tenggara Barat</option>
+                <option value="Nusa Tenggara Timur" {{ request('province') == 'Nusa Tenggara Timur' ? 'selected' : '' }}>Nusa Tenggara Timur</option>
+                <option value="Kalimantan Barat" {{ request('province') == 'Kalimantan Barat' ? 'selected' : '' }}>Kalimantan Barat</option>
+                <option value="Kalimantan Tengah" {{ request('province') == 'Kalimantan Tengah' ? 'selected' : '' }}>Kalimantan Tengah</option>
+                <option value="Kalimantan Selatan" {{ request('province') == 'Kalimantan Selatan' ? 'selected' : '' }}>Kalimantan Selatan</option>
+                <option value="Kalimantan Timur" {{ request('province') == 'Kalimantan Timur' ? 'selected' : '' }}>Kalimantan Timur</option>
+                <option value="Kalimantan Utara" {{ request('province') == 'Kalimantan Utara' ? 'selected' : '' }}>Kalimantan Utara</option>
+                <option value="Sulawesi Utara" {{ request('province') == 'Sulawesi Utara' ? 'selected' : '' }}>Sulawesi Utara</option>
+                <option value="Gorontalo" {{ request('province') == 'Gorontalo' ? 'selected' : '' }}>Gorontalo</option>
+                <option value="Sulawesi Tengah" {{ request('province') == 'Sulawesi Tengah' ? 'selected' : '' }}>Sulawesi Tengah</option>
+                <option value="Sulawesi Barat" {{ request('province') == 'Sulawesi Barat' ? 'selected' : '' }}>Sulawesi Barat</option>
+                <option value="Sulawesi Selatan" {{ request('province') == 'Sulawesi Selatan' ? 'selected' : '' }}>Sulawesi Selatan</option>
+                <option value="Sulawesi Tenggara" {{ request('province') == 'Sulawesi Tenggara' ? 'selected' : '' }}>Sulawesi Tenggara</option>
+                <option value="Maluku" {{ request('province') == 'Maluku' ? 'selected' : '' }}>Maluku</option>
+                <option value="Maluku Utara" {{ request('province') == 'Maluku Utara' ? 'selected' : '' }}>Maluku Utara</option>
+                <option value="Papua" {{ request('province') == 'Papua' ? 'selected' : '' }}>Papua</option>
+                <option value="Papua Barat" {{ request('province') == 'Papua Barat' ? 'selected' : '' }}>Papua Barat</option>
+                <option value="Papua Selatan" {{ request('province') == 'Papua Selatan' ? 'selected' : '' }}>Papua Selatan</option>
+                <option value="Papua Tengah" {{ request('province') == 'Papua Tengah' ? 'selected' : '' }}>Papua Tengah</option>
+                <option value="Papua Pegunungan" {{ request('province') == 'Papua Pegunungan' ? 'selected' : '' }}>Papua Pegunungan</option>
+            </select>
+
+            {{-- Kategori Budaya --}}
+            <select name="file_category" onchange="this.form.submit()" 
+                    class="px-3 py-2 border rounded bg-white text-sm w-full">
+                <option value="">🎭 Budaya</option>
+                <option value="pakaian_adat" {{ request('file_category') == 'pakaian_adat' ? 'selected' : '' }}>👘 Pakaian Adat</option>
+                <option value="upacara_adat" {{ request('file_category') == 'upacara_adat' ? 'selected' : '' }}>🙏 Upacara Adat</option>
+                <option value="makanan_khas" {{ request('file_category') == 'makanan_khas' ? 'selected' : '' }}>🍲 Makanan Khas</option>
+                <option value="lagu_daerah" {{ request('file_category') == 'lagu_daerah' ? 'selected' : '' }}>🎶 Lagu Daerah</option>
+                <option value="alat_musik" {{ request('file_category') == 'alat_musik' ? 'selected' : '' }}>🥁 Alat Musik Tradisional</option>
+                <option value="senjata_tradisional" {{ request('file_category') == 'senjata_tradisional' ? 'selected' : '' }}>⚔️ Senjata Tradisional</option>
+                <option value="alam" {{ request('file_category') == 'alam' ? 'selected' : '' }}>⛰️ Alam</option>
+                <option value="rumah_tradisional" {{ request('file_category') == 'rumah_tradisional' ? 'selected' : '' }}>🏠 Rumah Tradisional</option>
+                <option value="tari_tradisional" {{ request('file_category') == 'tari_tradisional' ? 'selected' : '' }}>💃 Tari Tradisional</option>
+                <option value="permainan_tradisional" {{ request('file_category') == 'permainan_tradisional' ? 'selected' : '' }}>🎮 Permainan Tradisional</option>
+                <option value="pertunjukan_daerah" {{ request('file_category') == 'pertunjukan_daerah' ? 'selected' : '' }}>👯‍♀️ Pertunjukan Daerah</option>
+                <option value="profil_daerah" {{ request('file_category') == 'profil_daerah' ? 'selected' : '' }}>📜 Profil Daerah</option>
+                <option value="cerita_rakyat" {{ request('file_category') == 'cerita_rakyat' ? 'selected' : '' }}>📖 Cerita Rakyat</option>
+                <option value="sejarah" {{ request('file_category') == 'sejarah' ? 'selected' : '' }}>📚 Sejarah</option>
+                <option value="event" {{ request('file_category') == 'event' ? 'selected' : '' }}>🎉 Kegiatan/Event</option>
+            </select>
+
+            {{-- Jenis File --}}
+            <select name="category" onchange="this.form.submit()" 
+                    class="px-3 py-2 border rounded bg-white text-sm w-full">
+                <option value="">📁 Kategori</option>
+                <option value="images" {{ request('category') == 'images' ? 'selected' : '' }}>🖼️ Gambar</option>
+                <option value="music" {{ request('category') == 'music' ? 'selected' : '' }}>🎵 Musik</option>
+                <option value="videos" {{ request('category') == 'videos' ? 'selected' : '' }}>🎬 Video</option>
+                <option value="docs" {{ request('category') == 'docs' ? 'selected' : '' }}>📄 Dokumen</option>
+            </select>
+        </div>
     </form>
 
     {{-- Daftar Postingan --}}
