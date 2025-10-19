@@ -27,17 +27,21 @@
 
                     {{-- Menampilkan Video --}}
                     <div class="w-full bg-black flex justify-center">
-                        <video controls class="max-h-[500px] object-contain w-full">
+                        <video controls preload="none" class="max-h-[500px] object-contain w-full rounded-b" 
+                               @if($post->cover_path)
+                                   poster="{{ asset('storage/' . $post->cover_path) }}"
+                               @endif>
                             <source src="{{ asset('storage/' . $post->file_path) }}" type="video/mp4">
                             Browser kamu tidak mendukung video.
                         </video>
                     </div>
 
-                    {{-- Thumbnail / Cover disembunyikan --}}
+                    {{-- Thumbnail / Cover (disembunyikan tapi tetap lazy) --}}
                     @if ($post->cover_path)
                         <div class="text-center hidden" id="thumbnail-{{ $post->id }}">
                             <img src="{{ asset('storage/' . $post->cover_path) }}" 
                                  alt="Cover Video {{ $post->title }}" 
+                                 loading="lazy"
                                  class="max-h-[500px] object-contain w-full mt-2">
                         </div>
                     @endif
@@ -46,11 +50,16 @@
                     <div class="px-4 py-3 text-lg">
                         <p class="text-gray-400 text-xs mb-2">Dibuat: {{ $post->created_at->diffForHumans() }}</p>
                         <div class="flex items-center gap-6">
-                            <form action="{{ route('posts.like', $post->id) }}" method="POST">@csrf
-                                <button type="submit" class="flex items-center gap-2 hover:text-red-600">❤️ <span>{{ $post->likes()->count() }}</span></button>
+                            <form action="{{ route('posts.like', $post->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" 
+                                        class="flex items-center gap-2 hover:text-red-600 transition-colors duration-200">
+                                    ❤️ <span>{{ $post->likes()->count() }}</span>
+                                </button>
                             </form>
-                            <a href="{{ route('posts.show', $post->id) }}" class="flex items-center gap-2 hover:text-green-600 transition-colors duration-200">
-                            💬 <span>{{ $post->comments()->count() }}</span>
+                            <a href="{{ route('posts.show', $post->id) }}" 
+                               class="flex items-center gap-2 hover:text-green-600 transition-colors duration-200">
+                                💬 <span>{{ $post->comments()->count() }}</span>
                             </a>
                         </div>
                     </div>

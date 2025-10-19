@@ -170,6 +170,7 @@ class PostController extends Controller
                     });
             })
             ->orderBy('likes_count', 'desc')
+            ->take(12)
             ->get(); // ambil semua, tanpa paginate
 
         return view('posts.popular', compact('posts'));

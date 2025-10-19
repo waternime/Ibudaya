@@ -11,7 +11,7 @@
         <button type="button" 
                 onclick="document.getElementById('mobileFilter').classList.toggle('hidden')"
                 class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold">
-            Filter Pronvinsi & Budaya
+            Filter Provinsi & Budaya
         </button>
     </div>
 
@@ -101,103 +101,114 @@
 
     {{-- Daftar Postingan --}}
     @forelse($posts as $post)
-        <div class="mb-10 border rounded-lg shadow bg-white overflow-hidden">
+        @php
+            $coverPath = $post->cover_path;
+            $filePath  = $post->file_path;
+            $isImage   = $filePath && Str::endsWith($filePath, ['jpg','jpeg','png','gif','webp']);
+            $isMusic   = $filePath && Str::endsWith($filePath, ['mp3','wav','ogg']);
+            $isVideo   = $filePath && Str::endsWith($filePath, ['mp4','webm']);
+            $isDoc     = $filePath && Str::endsWith($filePath, ['pdf','doc','docx','xls','xlsx','ppt','pptx']);
+        @endphp
 
-            {{-- Header --}}
-            <div class="flex items-center justify-between px-4 py-3 border-b">
-                <div>
-                    <p class="font-semibold">{{ $post->title }}</p>
-                    <span class="text-xs text-gray-500 block">
-                        📌 {{ ucfirst($post->province) ?? 'Umum' }}
+        {{-- DITAMBAHKAN efek hover dan transisi biar interaktif --}}
+        <div class="mb-10 border rounded-lg shadow bg-white overflow-hidden hover:shadow-lg hover:-translate-y-1 transition duration-200">
+
+            {{-- DITAMBAHKAN: Bungkus seluruh isi kartu dengan link ke halaman detail --}}
+            <a href="{{ route('posts.show', $post->id) }}" class="block">
+
+                {{-- Header --}}
+                <div class="flex items-center justify-between px-4 py-3 border-b">
+                    <div>
+                        <p class="font-semibold">{{ $post->title }}</p>
+                        <span class="text-xs text-gray-500 block">
+                            📌 {{ ucfirst($post->province) ?? 'Umum' }}
+                        </span>
+                        <span class="text-xs text-gray-500">
+                            🎭 {{ ucfirst($post->file_category) ?? 'Tidak ada kategori' }}
+                        </span>
+                    </div>
+                    <span class="text-xs px-2 py-1 bg-gray-200 rounded">
+                        {{ ucfirst($post->category) }}
                     </span>
-                    <span class="text-xs text-gray-500">
-                        🎭 {{ ucfirst($post->file_category) ?? 'Tidak ada kategori' }}
-                    </span>
                 </div>
-                <span class="text-xs px-2 py-1 bg-gray-200 rounded">
-                    {{ ucfirst($post->category) }}
-                </span>
-            </div>
 
-            {{-- Konten Media --}}
-            @php
-                $coverPath = $post->cover_path;
-                $filePath  = $post->file_path;
-                $isImage   = $filePath && Str::endsWith($filePath, ['jpg','jpeg','png','gif','webp']);
-                $isMusic   = $filePath && Str::endsWith($filePath, ['mp3','wav','ogg']);
-                $isVideo   = $filePath && Str::endsWith($filePath, ['mp4','webm']);
-                $isDoc     = $filePath && Str::endsWith($filePath, ['pdf','doc','docx','xls','xlsx','ppt','pptx']);
-            @endphp
+                {{-- Konten Media --}}
+                @if ($coverPath && !$isVideo)
+                    {{-- DITAMBAHKAN: "onclick" tetap di sini agar klik gambar buka modal, bukan pindah halaman --}}
+                    <div class="w-full bg-gray-100" onclick="event.preventDefault(); openModal('{{ asset('storage/' . $coverPath) }}')">
+                        <img src="{{ asset('storage/' . $coverPath) }}" 
+                            alt="Cover {{ $post->title }}" 
+                            loading="lazy"
+                            class="w-full object-contain cursor-pointer">
+                    </div>
+                @endif
 
-            @if ($coverPath && !$isVideo)
-                <div class="w-full bg-gray-100">
-                    <img src="{{ asset('storage/' . $coverPath) }}" 
-                         alt="Cover {{ $post->title }}" 
-                         class="w-full object-contain cursor-pointer"
-                         onclick="openModal('{{ asset('storage/' . $coverPath) }}')">
-                </div>
-            @endif
+                @if ($isImage)
+                    <div class="w-full bg-gray-100" onclick="event.preventDefault(); openModal('{{ asset('storage/' . $filePath) }}')">
+                        <img src="{{ asset('storage/' . $filePath) }}" 
+                            alt="{{ $post->title }}" 
+                            loading="lazy"
+                            class="w-full object-contain cursor-pointer">
+                    </div>
+                @endif
 
-            @if ($isImage)
-                <div class="w-full bg-gray-100">
-                    <img src="{{ asset('storage/' . $filePath) }}" 
-                         alt="{{ $post->title }}" 
-                         class="w-full object-contain cursor-pointer"
-                         onclick="openModal('{{ asset('storage/' . $filePath) }}')">
-                </div>
-            @endif
+                @if ($isMusic)
+                    <div class="px-4 py-3 border-b">
+                        <button 
+                            class="music-track w-full text-center px-3 py-2 bg-purple-600 text-white text-sm rounded hover:bg-purple-700"
+                            data-src="{{ asset('storage/' . $filePath) }}"
+                            data-title="{{ $post->title }}">
+                            🎵 Putar Musik
+                        </button>
+                    </div>
+                @endif
 
-            @if ($isMusic)
-                <div class="px-4 py-3 border-b">
-                    <button 
-                        class="music-track w-full text-center px-3 py-2 bg-purple-600 text-white text-sm rounded hover:bg-purple-700"
-                        data-src="{{ asset('storage/' . $filePath) }}"
-                        data-title="{{ $post->title }}">
-                        🎵 Putar Musik
-                    </button>
-                </div>
-            @endif
+                @if ($isVideo)
+                    <div class="w-full bg-black border-b">
+                        <video controls class="w-full" style="max-height:400px;" preload="none" poster="{{ $coverPath ? asset('storage/'.$coverPath) : '' }}">
+                            <source src="{{ asset('storage/' . $filePath) }}" type="video/mp4">
+                            Browser Anda tidak mendukung pemutar video.
+                        </video>
+                    </div>
+                @endif
 
-            @if ($isVideo)
-                <div class="w-full bg-black border-b">
-                    <video controls class="w-full" style="max-height:400px;">
-                        <source src="{{ asset('storage/' . $filePath) }}" type="video/mp4">
-                        Browser Anda tidak mendukung pemutar video.
-                    </video>
-                </div>
-            @endif
-
-            @if ($isDoc && $post->category === 'docs')
-                <div class="px-4 py-3 border-b flex gap-3">
-                    <a href="{{ route('posts.download', $post->id) }}"
-                       class="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
-                        ⬇️ Download Dokumen
-                    </a>
-                    @if (Str::endsWith($filePath, 'pdf'))
-                        <a href="{{ route('posts.preview', $post->id) }}" target="_blank"
-                           class="flex-1 text-center px-3 py-2 bg-gray-600 text-white text-sm rounded hover:bg-gray-700">
-                            🔍 Preview
+                @if ($isDoc && $post->category === 'docs')
+                    <div class="px-4 py-3 border-b flex gap-3">
+                        <a href="{{ route('posts.download', $post->id) }}"
+                        class="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                        onclick="event.stopPropagation()"> {{-- DITAMBAHKAN agar klik download tidak ikut buka halaman --}}
+                            ⬇️ Download Dokumen
                         </a>
-                    @endif
-                </div>
-            @endif
+                        @if (Str::endsWith($filePath, 'pdf'))
+                            <a href="{{ route('posts.preview', $post->id) }}" target="_blank"
+                            class="flex-1 text-center px-3 py-2 bg-gray-600 text-white text-sm rounded hover:bg-gray-700"
+                            onclick="event.stopPropagation()"> {{-- DITAMBAHKAN --}}
+                                🔍 Preview
+                            </a>
+                        @endif
+                    </div>
+                @endif
 
-            {{-- Konten --}}
-            @if($post->content)
-                <div class="px-4 py-3 text-sm text-gray-700 border-b">
-                    {{ Str::limit($post->content, 200) }}
-                </div>
-            @endif
+                {{-- Konten --}}
+                @if($post->content)
+                    <div class="px-4 py-3 text-sm text-gray-700 border-b">
+                        {{ Str::limit($post->content, 200) }}
+                    </div>
+                @endif
+            </a>
 
             {{-- Like & Comment --}}
             <div class="px-4 py-3 text-lg">
                 <p class="text-gray-400 text-xs mb-2">Dibuat: {{ $post->created_at->diffForHumans() }}</p>
                 <div class="flex items-center gap-6">
                     <form action="{{ route('posts.like', $post->id) }}" method="POST">@csrf
-                        <button type="submit" class="flex items-center gap-2 hover:text-red-600">❤️ <span>{{ $post->likes()->count() }}</span></button>
+                        <button type="submit" class="flex items-center gap-2 hover:text-red-600">❤️ 
+                            <span>{{ $post->likes()->count() }}</span>
+                        </button>
                     </form>
-                    <a href="{{ route('posts.show', $post->id) }}" class="flex items-center gap-2 hover:text-green-600 transition-colors duration-200">
-                    💬 <span>{{ $post->comments()->count() }}</span>
+                    <a href="{{ route('posts.show', $post->id) }}" 
+                    class="flex items-center gap-2 hover:text-green-600 transition-colors duration-200">
+                        💬 <span>{{ $post->comments()->count() }}</span>
                     </a>
                 </div>
             </div>
@@ -210,7 +221,7 @@
 {{-- Modal Preview Gambar --}}
 <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
     <button class="absolute top-5 right-8 text-white text-3xl font-bold" onclick="closeModal()">❌</button>
-    <img id="modalImage" class="max-w-full max-h-[80vh] rounded shadow-lg object-contain">
+    <img id="modalImage" class="max-w-full max-h-[80vh] rounded shadow-lg object-contain" loading="lazy">
 </div>
 
 <script>
