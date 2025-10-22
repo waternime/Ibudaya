@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->longText('title');
             $table->string('file_path');
             $table->string('cover_path')->nullable(); // cover opsional
             $table->string('category'); // images, music, videos, docs

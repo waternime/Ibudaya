@@ -45,7 +45,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title'         => 'required|string|max:255',
+            'title'         => 'required|string|max:5000',
             'category'      => 'required|in:images,music,videos,docs',
             'file_category' => 'required|string|max:255',
             'province'      => 'required|string|max:255',
@@ -212,13 +212,6 @@ class PostController extends Controller
              ->get();
 
         return view('posts.docs', compact('posts'));
-    }
-
-    public function like(Post $post)
-    {
-        $post->likes = ($post->likes ?? 0) + 1;
-        $post->save();
-        return back();
     }
 
     public function toggleLike(Post $post)
