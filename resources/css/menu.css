@@ -557,7 +557,6 @@ button {
 }
 
 /* === FIX: Bayangan putih/abu saat klik tombol Like di dark mode === */
-body.dark-mode button,
 body.dark-mode button:focus,
 body.dark-mode button:active {
     background: transparent !important;

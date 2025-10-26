@@ -25,18 +25,23 @@
             $isDoc     = $filePath && \Illuminate\Support\Str::endsWith($filePath, ['pdf','doc','docx','xls','xlsx','ppt','pptx']);
         @endphp
 
+        {{-- Cover (kalau bukan video) --}}
         @if ($coverPath && !$isVideo)
             <img src="{{ asset('storage/' . $coverPath) }}" 
                  class="w-full object-contain cursor-pointer"
                  alt="Cover"
                  onclick="openModal('{{ asset('storage/' . $coverPath) }}')">
         @endif
+
+        {{-- Gambar --}}
         @if ($isImage)
             <img src="{{ asset('storage/' . $filePath) }}" 
                  class="w-full object-contain cursor-pointer"
                  alt="Image"
                  onclick="openModal('{{ asset('storage/' . $filePath) }}')">
         @endif
+
+        {{-- Musik --}}
         @if ($isMusic)
             <div class="px-4 py-3 border-b">
                 <button class="music-track w-full px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
@@ -45,11 +50,35 @@
                 </button>
             </div>
         @endif
+
+        {{-- Video dengan cover (thumbnail) --}}
         @if ($isVideo)
-            <video controls class="w-full max-h-[400px] bg-black">
-                <source src="{{ asset('storage/' . $filePath) }}">
-            </video>
+            <div class="relative w-full bg-black">
+                {{-- Jika ada cover, tampilkan dulu sebelum video --}}
+                @if ($coverPath)
+                    <div id="videoCover" class="cursor-pointer relative">
+                        <img src="{{ asset('storage/' . $coverPath) }}" 
+                             alt="Cover Video" 
+                             class="w-full object-contain">
+                        {{-- Tombol Play di tengah --}}
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <button onclick="playVideo()" 
+                                    class="bg-white/80 hover:bg-white text-black rounded-full p-4 shadow-lg transition">
+                                ▶️
+                            </button>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Video tersembunyi dulu --}}
+                <video id="videoPlayer" controls class="w-full max-h-[400px] bg-black {{ $coverPath ? 'hidden' : '' }}">
+                    <source src="{{ asset('storage/' . $filePath) }}" type="video/mp4">
+                    Browser Anda tidak mendukung pemutar video.
+                </video>
+            </div>
         @endif
+
+        {{-- Dokumen --}}
         @if ($isDoc && $post->category === 'docs')
             <div class="px-4 py-3 border-b flex gap-3">
                 <a href="{{ route('posts.download', $post->id) }}" class="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded">⬇️ Download</a>
@@ -59,6 +88,7 @@
             </div>
         @endif
 
+        {{-- Konten teks --}}
         @if($post->content)
             <div class="px-4 py-3 text-sm text-gray-700 border-b">{{ $post->content }}</div>
         @endif
@@ -209,16 +239,28 @@
             const el = document.getElementById(id);
             if (el) el.classList.toggle('hidden');
         }
+
         function openModal(src) {
             document.getElementById('modalImage').src = src;
             const modal = document.getElementById('imageModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
         }
+
         function closeModal() {
             const modal = document.getElementById('imageModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+        }
+
+        function playVideo() {
+            const cover = document.getElementById('videoCover');
+            const video = document.getElementById('videoPlayer');
+            if (cover && video) {
+                cover.classList.add('hidden');
+                video.classList.remove('hidden');
+                video.play();
+            }
         }
     </script>
 </div>

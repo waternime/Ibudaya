@@ -62,12 +62,8 @@
                             alt="Profile" class="w-full h-full object-cover">
                     </a>
                 @else
-                    <a href="{{ route('register') }}"
-                    class="px-4 py-1 bg-green-600 text-white rounded-full hover:bg-green-700">
-                    Register
-                    </a>
                     <a href="{{ route('login') }}" 
-                    class="px-4 py-1 bg-blue-600 text-white rounded-full hover:bg-blue-700">
+                    class="px-4 py-1 bg-red-600 text-white rounded-full hover:bg-red-700">
                     Login
                     </a>
                 @endif
@@ -105,11 +101,8 @@
                     <span class="inline-block">{{ Auth::user()->name }}</span>
                 </a>
             @else
-                <a href="{{ route('login') }}" class="px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 text-sm text-center">
+                <a href="{{ route('login') }}" class="px-2 py-1 rounded bg-red-600 text-white hover:bg-red-700 text-sm text-center">
                     Login
-                </a>
-                <a href="{{ route('register') }}" class="px-2 py-1 rounded bg-green-600 text-white hover:bg-green-700 text-sm text-center">
-                    Register
                 </a>
             @endif
         </div>

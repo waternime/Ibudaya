@@ -10,7 +10,7 @@
     <div class="sm:hidden mb-4 text-center">
         <button type="button" 
                 onclick="document.getElementById('mobileFilter').classList.toggle('hidden')"
-                class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold">
+                class="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-semibold">
             Filter Provinsi & Budaya
         </button>
     </div>
@@ -175,7 +175,7 @@
                 @if ($isDoc && $post->category === 'docs')
                     <div class="px-4 py-3 border-b flex gap-3">
                         <a href="{{ route('posts.download', $post->id) }}"
-                        class="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                        class="flex-1 text-center px-3 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700"
                         onclick="event.stopPropagation()"> {{-- DITAMBAHKAN agar klik download tidak ikut buka halaman --}}
                             ⬇️ Download Dokumen
                         </a>
