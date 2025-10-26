@@ -28,8 +28,8 @@
             <form action="{{ route('posts.search') }}" method="GET" class="w-full max-w-full md:max-w-2xl flex">
                 <input type="text" name="search" value="{{ request('search') }}"
                     placeholder="Telusuri..."
-                    class="w-full px-4 py-2 border rounded-l-full focus:ring focus:ring-blue-300">
-                <button type="submit" class="px-4 bg-gray-100 border rounded-r-full hover:bg-gray-200">
+                    class="w-full px-4 py-2 border rounded-l-full focus:ring-[1.5px] focus:ring-red-200 focus:outline-none">
+                <button type="submit" class="px-4 bg-gray-100 border rounded-r-full hover:bg-gray-200 ">
                     🔍
                 </button>
             </form>

@@ -547,3 +547,37 @@ body.dark-mode .music-track h3 {
 body.dark-mode .music-track p {
     color: #bbb !important;
 }
+
+/* Hilangkan efek putih / bayangan default saat button ditekan */
+button {
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+/* === FIX: Bayangan putih/abu saat klik tombol Like di dark mode === */
+body.dark-mode button,
+body.dark-mode button:focus,
+body.dark-mode button:active {
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Hapus efek fokus biru (Chrome/Safari default) */
+button:focus-visible {
+    outline: none !important;
+}
+
+/* Pastikan tombol Like tetap transparan di semua mode */
+.mb-10.border.rounded-lg.shadow.bg-white button {
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Kalau mau, tambahkan efek klik lembut (opsional) */
+button:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+}

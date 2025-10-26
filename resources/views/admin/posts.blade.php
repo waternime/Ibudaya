@@ -11,10 +11,11 @@
     <form method="GET" action="{{ route('admin.posts.index') }}" class="mb-4 flex flex-col sm:flex-row gap-2">
         <input type="text" name="search" value="{{ request('search') }}"
             placeholder="Cari postingan berdasarkan judul atau ID..."
-            class="w-full sm:flex-1 px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300">
+            class="w-full sm:flex-1 px-4 py-2 border rounded-lg focus:ring focus:ring-red-300">
         <div class="flex gap-2">
+            {{-- 🔴 Tombol cari jadi merah --}}
             <button type="submit"
-                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 w-full sm:w-auto">
+                    class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 w-full sm:w-auto">
                 Cari
             </button>
             @if(request('search'))
@@ -46,9 +47,10 @@
                             <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 text-center font-semibold text-gray-700 dark:text-gray-200">
                                 {{ $post->id }}
                             </td>
-                            <td class="px-4 py-2 border border-gray-200 dark:border-gray-700">
+                            <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-200">
+                                {{-- 🔴 Judul postingan warna merah --}}
                                 <a href="{{ route('posts.show', $post->id) }}" 
-                                class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                                   class="font-medium hover:underline">
                                     {{ $post->title }}
                                 </a>
                             </td>
@@ -107,7 +109,8 @@
                 @endphp
                 <div class="border rounded-lg p-4 shadow-sm bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
                     <div class="flex items-start justify-between gap-3">
-                        <a href="{{ route('posts.show', $post->id) }}" class="font-semibold text-base text-blue-600 dark:text-blue-400 hover:underline flex-1">
+                        {{-- 🔴 Judul postingan warna merah --}}
+                        <a href="{{ route('posts.show', $post->id) }}" class="font-medium hover:underline">
                             {{ $post->title }}
                         </a>
                         <span class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded whitespace-nowrap">

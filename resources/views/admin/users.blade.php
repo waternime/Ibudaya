@@ -9,11 +9,20 @@
     {{-- Form pencarian --}}
     <form method="GET" action="{{ route('admin.users.index') }}" class="mb-4 flex flex-col sm:flex-row gap-2">
         <input type="text" name="search" value="{{ request('search') }}"
-            placeholder="Cari berdasarkan ID atau Nama"
-            class="border rounded p-2 w-full sm:w-1/3">
+            placeholder="Cari postingan berdasarkan judul atau ID..."
+            class="w-full sm:flex-1 px-4 py-2 border rounded-lg focus:ring focus:ring-red-300">
         <div class="flex gap-2">
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full sm:w-auto">Cari</button>
-            <a href="{{ route('admin.users.index') }}" class="bg-gray-400 text-white px-4 py-2 rounded w-full sm:w-auto">Reset</a>
+            {{-- 🔴 Tombol cari jadi merah --}}
+            <button type="submit"
+                    class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 w-full sm:w-auto">
+                Cari
+            </button>
+            @if(request('search'))
+                <a href="{{ route('admin.posts.index') }}"
+                   class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 w-full sm:w-auto text-center">
+                    Reset
+                </a>
+            @endif
         </div>
     </form>
 
