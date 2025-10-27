@@ -267,7 +267,7 @@ sidebarLinks.forEach(link => {
     });
 });
 </script>
-<!-- JS untuk musik -->
+
 <script>
 // Toggle Dark/Light Mode
 const toggleBtn = document.getElementById('theme-toggle');
@@ -289,6 +289,112 @@ toggleBtn.addEventListener('click', () => {
         localStorage.setItem('theme','light');
     }
 });
+</script>
+
+{{-- Script Infinite Scroll + Virtual Scroll --}}
+<script>
+let page = 1;
+let loading = false;
+const postContainer = document.getElementById('post-container');
+const loader = document.getElementById('loader');
+const maxPostsInDOM = 100; // maksimal post yang tetap di DOM
+
+// simpan semua post yang sudah di-render
+let allPosts = [];
+
+window.addEventListener('scroll', () => {
+    const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+
+    if (nearBottom && !loading) {
+        loadMore();
+    }
+
+    // virtual scroll: hapus postingan yang jauh dari viewport
+    virtualScrollCleanup();
+});
+
+function loadMore() {
+    loading = true;
+    page++;
+    loader.classList.remove('hidden');
+
+    fetch(`?page=${page}`)
+        .then(res => res.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const newPosts = parser.parseFromString(html, 'text/html').querySelectorAll('#post-container > div');
+
+            newPosts.forEach(post => {
+                postContainer.appendChild(post);
+                allPosts.push(post);
+            });
+
+            // jika halaman baru kosong, stop scroll
+            if (newPosts.length === 0) {
+                window.removeEventListener('scroll', loadMore);
+            }
+
+            // pastikan jumlah post di DOM tidak melebihi maxPostsInDOM
+            virtualScrollCleanup();
+        })
+        .finally(() => {
+            loader.classList.add('hidden');
+            loading = false;
+        });
+}
+
+function virtualScrollCleanup() {
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+
+    // hapus postingan yang terlalu jauh dari viewport (atas & bawah)
+    while (allPosts.length > maxPostsInDOM) {
+        const firstPost = allPosts[0];
+        const lastPost = allPosts[allPosts.length - 1];
+
+        // cek posisi post
+        const firstRect = firstPost.getBoundingClientRect();
+        const lastRect = lastPost.getBoundingClientRect();
+
+        if (firstRect.bottom < -windowHeight) {
+            postContainer.removeChild(firstPost);
+            allPosts.shift();
+        } else if (lastRect.top > windowHeight * 2) {
+            postContainer.removeChild(lastPost);
+            allPosts.pop();
+        } else {
+            break;
+        }
+    }
+}
+</script>
+
+{{-- Script Modal --}}
+<script>
+    function openModal(src) {
+        const modal = document.getElementById('imageModal');
+        const image = document.getElementById('modalImage');
+        image.src = src;
+
+        // animasi fade in
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => {
+            image.classList.remove('scale-95', 'opacity-0');
+            image.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('imageModal');
+        const image = document.getElementById('modalImage');
+        // animasi fade out
+        image.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }, 200);
+    }
 </script>
 </body>
 </html>

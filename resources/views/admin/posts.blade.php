@@ -160,18 +160,4 @@
     <button class="absolute top-5 right-8 text-white text-3xl font-bold" onclick="closeModal()">❌</button>
     <img id="modalImage" class="max-w-full max-h-[80vh] rounded shadow-lg object-contain">
 </div>
-
-<script>
-    function openModal(src) {
-        document.getElementById('modalImage').src = src;
-        const modal = document.getElementById('imageModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    }
-    function closeModal() {
-        const modal = document.getElementById('imageModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-</script>
 @endsection
