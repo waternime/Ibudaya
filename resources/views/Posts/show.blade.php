@@ -81,7 +81,7 @@
         {{-- Dokumen --}}
         @if ($isDoc && $post->category === 'docs')
             <div class="px-4 py-3 border-b flex gap-3">
-                <a href="{{ route('posts.download', $post->id) }}" class="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded">⬇️ Download</a>
+                <a href="{{ route('posts.download', $post->id) }}" class="flex-1 text-center px-3 py-2 bg-red-600 text-white text-sm rounded">⬇️ Download</a>
                 @if (\Illuminate\Support\Str::endsWith($filePath, 'pdf'))
                     <a href="{{ route('posts.preview', $post->id) }}" target="_blank" class="flex-1 text-center px-3 py-2 bg-gray-600 text-white text-sm rounded">🔍 Preview</a>
                 @endif
@@ -116,11 +116,11 @@
             <input type="text" name="content"
                 class="flex-1 px-3 py-2 border rounded comment-input dark:bg-gray-700 dark:text-white text-sm"
                 placeholder="Tulis komentar...">
-            <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">Kirim</button>
+            <button class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm">Kirim</button>
         </form>
         @else
             <p class="text-gray-500 mb-4">Silakan
-                <a href="{{ route('login') }}" class="text-blue-500">login</a> untuk berkomentar.
+                <a href="{{ route('login') }}" class="text-red-500">login</a> untuk berkomentar.
             </p>
         @endauth
 
@@ -215,7 +215,7 @@
 
                         {{-- Nested replies --}}
                         @if($comment->replies->count() > 0)
-                            <button onclick="toggleElement('replies-{{ $comment->id }}')" class="text-xs text-blue-600 dark:text-blue-400 mt-2">Lihat Balasan ({{ $comment->replies->count() }})</button>
+                            <button onclick="toggleElement('replies-{{ $comment->id }}')" class="text-xs text-red-600 dark:text-red-400 mt-2">Lihat Balasan ({{ $comment->replies->count() }})</button>
                             <div id="replies-{{ $comment->id }}" class="hidden mt-2">
                                 @php renderReplies($comment, $post->id); @endphp
                             </div>

@@ -80,33 +80,47 @@
                 <a href="{{ route('posts.latest') }}">
                     <img src="{{ asset('images/logo.png') }}" 
                         alt="Logo" 
-                        class="h-8 w-auto object-contain">
+                        class="h-10 w-auto object-contain">
                 </a>
             </div>
 
-            <h4 class="font-semibold mb-1 text-xs text-gray-600">Akun</h4>
+            <hr class="my-4 md:hidden">
+            <h4 class="font-semibold mb-1 text-xs text-white-400 uppercase tracking-wide">Akun</h4>
             @if(Auth::check())
-                <a href="{{ route('posts.upload') }}" class="px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-sm">
-                    ➕ Buat
-                </a>
-                <a href="{{ route('notifications') }}" class="px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-sm">
-                    🔔 Notifikasi
-                </a>
-                <a href="{{ route('profile') }}" 
-                class="flex items-center gap-2 px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-sm">
-                    <img src="{{ Auth::user()->profile_picture 
-                                ? asset('storage/'.Auth::user()->profile_picture) 
-                                : asset('images/default-avatar.png') }}" 
-                        alt="Profile" class="w-6 h-6 rounded-full object-cover inline-block">
-                    <span class="inline-block">{{ Auth::user()->name }}</span>
-                </a>
+                <ul class="space-y-1 text-base">
+                    <li>
+                        <a href="{{ route('posts.upload') }}" 
+                        class="flex items-center gap-2 text-gray-200 hover:text-white transition-all duration-150">
+                            ➕ <span>Buat</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('notifications') }}" 
+                        class="flex items-center gap-2 text-gray-200 hover:text-white transition-all duration-150">
+                            🔔 <span>Notifikasi</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('profile') }}" 
+                        class="flex items-center gap-2 text-gray-200 hover:text-white transition-all duration-150">
+                            <img src="{{ Auth::user()->profile_picture 
+                                        ? asset('storage/'.Auth::user()->profile_picture) 
+                                        : asset('images/default-avatar.png') }}" 
+                                alt="Profile" 
+                                class="w-5 h-5 rounded-full object-cover inline-block align-middle">
+                            <span class="inline-block align-middle">{{ Auth::user()->name }}</span>
+                        </a>
+                    </li>
+                </ul>
             @else
-                <a href="{{ route('login') }}" class="px-2 py-1 rounded bg-red-600 text-white hover:bg-red-700 text-sm text-center">
+                <a href="{{ route('login') }}" 
+                class="block text-center bg-red-600 hover:bg-red-700 text-white py-1.5 rounded text-sm">
                     Login
                 </a>
             @endif
         </div>
 
+        <hr class="my-4 md:hidden">
         <h4>Jelajah</h4>
         <ul>
             <li><a href="{{ route('posts.images') }}">🖼️ Gambar</a></li>
@@ -119,15 +133,15 @@
         <h4>Lainnya</h4>
         <ul>
             <li><a href="{{ route('posts.popular') }}">⭐ Populer</a></li>
-            <li><a href="{{ route('rules') }}">📜 Peraturan Pengguna</a></li>
+            <li><a href="{{ route('rules') }}">📜 Peraturan</a></li>
         </ul>
 
         @if(Auth::check() && Auth::user()->role === 'admin')
             <hr class="my-4">
-            <h4>Menu Admin</h4>
+            <h4>Pusat Kontrol</h4>
             <ul>
-                <li><a href="{{ route('admin.users.index') }}">👥 Manajemen Pengguna</a></li>
-                <li><a href="{{ route('admin.posts.index') }}">📝 Manajemen Postingan</a></li>
+                <li><a href="{{ route('admin.users.index') }}">👥 Pengguna</a></li>
+                <li><a href="{{ route('admin.posts.index') }}">📝 Postingan</a></li>
             </ul>
         @endif
         <hr class="my-4">
