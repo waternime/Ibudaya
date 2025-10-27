@@ -13,7 +13,6 @@
             placeholder="Cari postingan berdasarkan judul atau ID..."
             class="w-full sm:flex-1 px-4 py-2 border rounded-lg focus:ring focus:ring-red-300">
         <div class="flex gap-2">
-            {{-- 🔴 Tombol cari jadi merah --}}
             <button type="submit"
                     class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 w-full sm:w-auto">
                 Cari
@@ -48,7 +47,6 @@
                                 {{ $post->id }}
                             </td>
                             <td class="px-4 py-2 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-200">
-                                {{-- 🔴 Judul postingan warna merah --}}
                                 <a href="{{ route('posts.show', $post->id) }}" 
                                    class="font-medium hover:underline">
                                     {{ $post->title }}
@@ -109,7 +107,6 @@
                 @endphp
                 <div class="border rounded-lg p-4 shadow-sm bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
                     <div class="flex items-start justify-between gap-3">
-                        {{-- 🔴 Judul postingan warna merah --}}
                         <a href="{{ route('posts.show', $post->id) }}" class="font-medium hover:underline">
                             {{ $post->title }}
                         </a>
@@ -147,6 +144,12 @@
                 </div>
             @endforeach
         </div>
+
+        {{-- Pagination --}}
+        <div class="mt-6">
+            {{ $posts->links('pagination::tailwind') }}
+        </div>
+
     @else
         <p class="text-gray-500 italic">Belum ada postingan.</p>
     @endif

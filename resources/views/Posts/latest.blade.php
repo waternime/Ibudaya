@@ -3,10 +3,9 @@
 @section('title', 'Postingan Terbaru')
 
 @section('content')
-<div class="max-w-2xl mx-auto">
-    <h2 class="text-2xl font-bold mb-6 text-center">🆕 Postingan Terbaru</h2>
 
-    {{-- 🔹 Versi Mobile: Tombol Filter --}}
+<h2 class="text-2xl font-bold mb-6 text-center">🆕 Postingan Terbaru</h2>
+{{-- 🔹 Versi Mobile: Tombol Filter --}}
     <div class="sm:hidden mb-4 text-center">
         <button type="button" 
                 onclick="document.getElementById('mobileFilter').classList.toggle('hidden')"
@@ -14,6 +13,8 @@
             Filter Provinsi & Budaya
         </button>
     </div>
+
+<div id="post-container" class="max-w-2xl mx-auto">
 
     {{-- 🔹 Filter Form --}}
     <form method="GET" action="{{ route('posts.latest') }}" 
@@ -218,6 +219,12 @@
     @endforelse
 </div>
 
+{{-- Loader kecil --}}
+    <div id="loader" class="text-center py-4 hidden text-gray-500">
+        ⏳ Memuat postingan...
+    </div>
+</div>
+
 {{-- Modal Preview Gambar --}}
 <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
     <button class="absolute top-5 right-8 text-white text-3xl font-bold" onclick="closeModal()">❌</button>
@@ -236,5 +243,41 @@
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     }
+</script>
+{{-- Script Infinite Scroll --}}
+<script>
+let page = 1;
+let loading = false;
+
+window.addEventListener('scroll', () => {
+    const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+
+    if (nearBottom && !loading) {
+        loadMore();
+    }
+});
+
+function loadMore() {
+    loading = true;
+    page++;
+    document.getElementById('loader').classList.remove('hidden');
+
+    fetch(`?page=${page}`)
+        .then(res => res.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const newPosts = parser.parseFromString(html, 'text/html').querySelectorAll('#post-container > div');
+
+            if (newPosts.length > 0) {
+                newPosts.forEach(post => document.getElementById('post-container').appendChild(post));
+            } else {
+                window.removeEventListener('scroll', loadMore);
+            }
+        })
+        .finally(() => {
+            document.getElementById('loader').classList.add('hidden');
+            loading = false;
+        });
+}
 </script>
 @endsection

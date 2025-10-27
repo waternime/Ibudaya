@@ -131,23 +131,25 @@ class PostController extends Controller
     {
         $query = \App\Models\Post::query();
 
-        // Filter provinsi (default: semua)
         if ($request->filled('province') && $request->province !== '__none__') {
             $query->where('province', $request->province);
         }
 
-        // Filter kategori file utama (images, music, videos, docs)
         if ($request->filled('category') && $request->category !== '__none__') {
             $query->where('category', $request->category);
         }
 
-        // Filter kategori budaya (pakaian_adat, makanan_khas, dll.)
         if ($request->filled('file_category') && $request->file_category !== '__none__') {
             $query->where('file_category', $request->file_category);
         }
 
-        // Urutkan terbaru
-        $posts = $query->orderBy('created_at', 'desc')->get();
+        // Pagination (10 per halaman)
+        $posts = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        // Kalau request AJAX, kirim HTML sebagian aja
+        if ($request->ajax()) {
+            return view('posts.latest', compact('posts'))->render();
+        }
 
         return view('posts.latest', compact('posts'));
     }
@@ -176,42 +178,56 @@ class PostController extends Controller
         return view('posts.popular', compact('posts'));
     }
 
-    public function images()
+    public function images(Request $request)
     {
         $posts = Post::where('category', 'images')
-                    ->latest()
-                    ->get(); // ambil semua tanpa pagination
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
+
+        if ($request->ajax()) {
+            return view('posts.images', compact('posts'))->render();
+        }
 
         return view('posts.images', compact('posts'));
     }
 
-    public function music()
+    public function music(Request $request)
     {
-        // Ambil semua post yang kategorinya musik
         $posts = Post::where('category', 'music')
-                    ->latest()
-                    ->get();
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(18);
+
+        if ($request->ajax()) {
+            return view('posts.music', compact('posts'))->render();
+        }
 
         return view('posts.music', compact('posts'));
     }
 
-    public function videos()
+    public function videos(Request $request)
     {
-        // Ambil semua post yang kategorinya videos
         $posts = Post::where('category', 'videos')
-                    ->latest()
-                    ->get();
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
+
+        if ($request->ajax()) {
+            return view('posts.videos', compact('posts'))->render();
+        }
 
         return view('posts.videos', compact('posts'));
     }
 
-    public function docs()
+    public function docs(Request $request)
     {
         $posts = Post::where('category', 'docs')
-             ->latest()
-             ->get();
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
 
-        return view('posts.docs', compact('posts'));
+        if ($request->ajax()) {
+        return view('posts.docs', compact('posts'))->render();
+    }
+
+    return view('posts.docs', compact('posts'));
     }
 
     public function toggleLike(Post $post)

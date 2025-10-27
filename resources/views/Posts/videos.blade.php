@@ -2,7 +2,7 @@
 @section('title', 'Video')
 
 @section('content')
-<div class="max-w-2xl mx-auto">
+<div id="post-container" class="max-w-2xl mx-auto">
     <h2 class="text-2xl font-bold mb-6 text-center">🎬 Video</h2>
 
     @if ($posts->count() > 0)
@@ -69,5 +69,45 @@
     @else
         <p class="text-gray-600 text-center">Belum ada video yang diupload.</p>
     @endif
+    {{-- Loader kecil --}}
+    <div id="loader" class="text-center py-4 hidden text-gray-500">
+        ⏳ Memuat postingan...
+    </div>
 </div>
+{{-- Script Infinite Scroll --}}
+<script>
+let page = 1;
+let loading = false;
+
+window.addEventListener('scroll', () => {
+    const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+
+    if (nearBottom && !loading) {
+        loadMore();
+    }
+});
+
+function loadMore() {
+    loading = true;
+    page++;
+    document.getElementById('loader').classList.remove('hidden');
+
+    fetch(`?page=${page}`)
+        .then(res => res.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const newPosts = parser.parseFromString(html, 'text/html').querySelectorAll('#post-container > div');
+
+            if (newPosts.length > 0) {
+                newPosts.forEach(post => document.getElementById('post-container').appendChild(post));
+            } else {
+                window.removeEventListener('scroll', loadMore);
+            }
+        })
+        .finally(() => {
+            document.getElementById('loader').classList.add('hidden');
+            loading = false;
+        });
+}
+</script>
 @endsection

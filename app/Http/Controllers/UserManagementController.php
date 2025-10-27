@@ -16,7 +16,7 @@ class UserManagementController extends Controller
                 return $query->where('name', 'like', "%{$search}%")
                              ->orWhere('id', $search);
             })
-            ->get();
+            ->paginate(20);
 
         return view('admin.users', compact('users', 'search'));
     }

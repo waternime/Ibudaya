@@ -3,7 +3,7 @@
 @section('title', 'Posting Gambar')
 
 @section('content')
-<div class="max-w-2xl mx-auto">
+<div id="post-container" class="max-w-2xl mx-auto">
     <h2 class="text-2xl font-bold mb-6 text-center">🖼️ Feed Gambar</h2>
 
     @forelse($posts as $post)
@@ -69,6 +69,12 @@
     @endforelse
 </div>
 
+{{-- Loader kecil --}}
+    <div id="loader" class="text-center py-4 hidden text-gray-500">
+        ⏳ Memuat postingan...
+    </div>
+</div>
+
 {{-- Modal Preview Gambar --}}
 <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4 transition-opacity duration-300">
     <button class="absolute top-5 right-8 text-white text-3xl font-bold hover:text-red-400" onclick="closeModal()">❌</button>
@@ -101,5 +107,41 @@
             modal.classList.remove('flex');
         }, 200);
     }
+</script>
+{{-- Script Infinite Scroll --}}
+<script>
+let page = 1;
+let loading = false;
+
+window.addEventListener('scroll', () => {
+    const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+
+    if (nearBottom && !loading) {
+        loadMore();
+    }
+});
+
+function loadMore() {
+    loading = true;
+    page++;
+    document.getElementById('loader').classList.remove('hidden');
+
+    fetch(`?page=${page}`)
+        .then(res => res.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const newPosts = parser.parseFromString(html, 'text/html').querySelectorAll('#post-container > div');
+
+            if (newPosts.length > 0) {
+                newPosts.forEach(post => document.getElementById('post-container').appendChild(post));
+            } else {
+                window.removeEventListener('scroll', loadMore);
+            }
+        })
+        .finally(() => {
+            document.getElementById('loader').classList.add('hidden');
+            loading = false;
+        });
+}
 </script>
 @endsection
