@@ -53,28 +53,26 @@
 
         {{-- Video dengan cover (thumbnail) --}}
         @if ($isVideo)
-            <div class="relative w-full bg-black">
-                {{-- Jika ada cover, tampilkan dulu sebelum video --}}
-                @if ($coverPath)
-                    <div id="videoCover" class="cursor-pointer relative">
-                        <img src="{{ asset('storage/' . $coverPath) }}" 
-                             alt="Cover Video" 
-                             class="w-full object-contain">
-                        {{-- Tombol Play di tengah --}}
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <button onclick="playVideo()" 
-                                    class="bg-white/80 hover:bg-white text-black rounded-full p-4 shadow-lg transition">
-                                ▶️
-                            </button>
-                        </div>
-                    </div>
-                @endif
-
-                {{-- Video tersembunyi dulu --}}
-                <video id="videoPlayer" controls class="w-full max-h-[400px] bg-black {{ $coverPath ? 'hidden' : '' }}">
+            {{-- Wrapper video interaktif --}}
+            <div class="w-full bg-black flex justify-center relative overflow-hidden group rounded-b-lg">
+                
+                {{-- Video --}}
+                <video 
+                    preload="metadata" 
+                    playsinline 
+                    class="video-player max-h-[500px] object-contain w-full rounded-b cursor-pointer transition-transform duration-200 group-hover:scale-[1.02]" 
+                    poster="{{ $coverPath ? asset('storage/' . $coverPath) : '' }}"
+                    onclick="event.preventDefault(); event.stopPropagation();"
+                    controlslist="nodownload"
+                >
                     <source src="{{ asset('storage/' . $filePath) }}" type="video/mp4">
-                    Browser Anda tidak mendukung pemutar video.
+                    Browser kamu tidak mendukung video.
                 </video>
+
+                {{-- Overlay ▶️ tampil sebelum video diputar, lalu hilang permanen --}}
+                <div class="video-overlay absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity duration-500 opacity-0 group-hover:opacity-100 pointer-events-none">
+                    <span class="text-white text-5xl">▶️</span>
+                </div>
             </div>
         @endif
 

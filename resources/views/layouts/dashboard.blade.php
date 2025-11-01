@@ -369,6 +369,61 @@ function virtualScrollCleanup() {
 }
 </script>
 
+{{-- Script Video Player --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.video-player').forEach(video => {
+        const container = video.closest('.group');
+        const overlay = container?.querySelector('.video-overlay');
+        let hasPlayed = false;
+
+        // Awalnya sembunyikan kontrol video
+        video.controls = false;
+
+        video.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (video.paused) {
+                // Pause semua video lain
+                document.querySelectorAll('.video-player').forEach(v => {
+                    if (v !== video) {
+                        v.pause();
+                        v.controls = false;
+                    }
+                });
+
+                // Aktifkan kontrol & mainkan video
+                video.controls = true;
+                video.play();
+
+                // Hilangkan overlay dengan animasi halus
+                if (overlay) overlay.classList.add('opacity-0');
+                hasPlayed = true;
+            } else {
+                video.pause();
+            }
+        });
+
+        // Saat video selesai
+        video.addEventListener('ended', () => {
+            // Setelah selesai, sembunyikan kembali kontrol
+            video.controls = false;
+        });
+
+        // Saat video pertama kali diputar
+        video.addEventListener('playing', () => {
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 400); // tunggu animasi fade-out
+            }
+        });
+    });
+});
+</script>
+
 {{-- Script Modal --}}
 <script>
     function openModal(src) {
