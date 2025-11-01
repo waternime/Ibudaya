@@ -45,7 +45,7 @@
 
                         {{-- Overlay ▶️ muncul sebelum video diputar, lalu hilang permanen --}}
                         <div class="video-overlay absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity duration-500 opacity-0 group-hover:opacity-100 pointer-events-none">
-                            <span class="text-white text-5xl">▶️</span>
+                            <span class="text-white text-5xl">▶︎</span>
                         </div>
                     </div>
 
