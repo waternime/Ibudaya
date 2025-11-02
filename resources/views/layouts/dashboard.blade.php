@@ -181,6 +181,7 @@
 
 <!-- JS untuk musik -->
 <script>
+// --- JS untuk musik ---
 const audioPlayer = document.getElementById('audio-player');
 const tracks = Array.from(document.querySelectorAll('.music-track'));
 let currentIndex = -1;
@@ -240,6 +241,13 @@ progressBar.addEventListener('input', ()=>{
 
 audio.addEventListener('loadedmetadata', ()=>{
     durationEl.textContent = formatTime(audio.duration);
+});
+
+// --- FIX: klik tombol Like/Comment tidak memicu musik ---
+document.querySelectorAll('.like-btn, .comment-link').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+        e.stopPropagation();
+    });
 });
 </script>
 
@@ -450,6 +458,66 @@ document.addEventListener('DOMContentLoaded', function () {
             modal.classList.remove('flex');
         }, 200);
     }
+</script>
+
+{{-- Script Read More Postingan --}}
+<script>
+function toggleTitle(id) {
+    const shortEl = document.getElementById(`short-title-${id}`);
+    const fullEl = document.getElementById(`full-title-${id}`);
+    const btn = event.target;
+
+    if (shortEl.classList.contains('hidden')) {
+        shortEl.classList.remove('hidden');
+        fullEl.classList.add('hidden');
+        btn.textContent = 'Read more';
+    } else {
+        shortEl.classList.add('hidden');
+        fullEl.classList.remove('hidden');
+        btn.textContent = 'Show less';
+    }
+}
+</script>
+
+{{-- Script Filter Profile --}}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.filter-btn');
+    const posts = document.querySelectorAll('.post-item');
+
+    // pastikan tombol "Semua" aktif saat load
+    buttons.forEach(b => {
+        if(b.getAttribute('data-filter') === 'all') {
+            b.classList.add('bg-red-600', 'text-white');
+            b.classList.remove('bg-gray-200', 'text-gray-700');
+        }
+    });
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const filter = btn.getAttribute('data-filter');
+
+            // reset semua tombol
+            buttons.forEach(b => {
+                b.classList.remove('bg-red-600', 'text-white');
+                b.classList.add('bg-gray-200', 'text-gray-700');
+            });
+
+            // set tombol aktif
+            btn.classList.add('bg-red-600', 'text-white');
+            btn.classList.remove('bg-gray-200', 'text-gray-700');
+
+            // tampilkan/sembunyikan postingan
+            posts.forEach(post => {
+                if (filter === 'all' || post.dataset.category === filter) {
+                    post.classList.remove('hidden');
+                } else {
+                    post.classList.add('hidden');
+                }
+            });
+        });
+    });
+});
 </script>
 </body>
 </html>

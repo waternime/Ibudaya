@@ -280,6 +280,23 @@ class PostController extends Controller
             'Content-Type' => 'application/pdf',
         ]);
     }
+    // Halaman profil / daftar postingan milik user yang login
+    public function profile(Request $request)
+    {
+        $user = auth()->user();
+
+        $query = \App\Models\Post::where('user_id', $user->id);
+
+        // Kalau ada filter kategori, tambahkan where
+        if ($request->has('filter') && $request->filter !== 'all') {
+            $query->where('category', $request->filter);
+        }
+
+        $posts = $query->orderBy('created_at', 'desc')->paginate(12);
+
+        return view('profile', compact('posts'));
+    }
+
     // MyFiles
     public function edit(Post $post)
     {
@@ -289,6 +306,7 @@ class PostController extends Controller
 
         return view('posts.edit', compact('post'));
     }
+
     // Update postingan
     public function update(Request $request, Post $post)
     {

@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
     // Profil & Dashboard
     Route::get('/profile', [DashboardController::class, 'index'])->name('profile');
+    Route::get('/profile', [PostController::class, 'profile'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::resource('posts', PostController::class)->except(['create', 'store', 'index']);

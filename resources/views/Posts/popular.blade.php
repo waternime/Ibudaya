@@ -24,7 +24,7 @@
                         1 => 'bg-yellow-400 text-black', // emas
                         2 => 'bg-gray-300 text-black',   // perak
                         3 => 'bg-amber-600 text-white',  // perunggu
-                        default => 'bg-blue-500 text-white'
+                        default => 'bg-red-500 text-white'
                     };
                 @endphp
 
@@ -64,10 +64,19 @@
 
                     {{-- Konten --}}
                     <div class="p-4">
-                        <h2 class="text-lg font-semibold mb-2">
-                            <a href="{{ route('posts.show', $post->id) }}" class="text-blue-600 hover:underline">
-                                {{ $post->title }}
-                            </a>
+                        {{-- Judul dengan read more (berdasarkan jumlah karakter) --}}
+                        @php
+                            $maxLength = 50; // batas karakter sebelum Read more muncul
+                            $isLongTitle = strlen($post->title) > $maxLength;
+                            $shortTitle = Str::limit($post->title, $maxLength, '');
+                        @endphp
+
+                        <h2 class="text-lg font-semibold mb-2 text-gray-900 dark:text-white break-title">
+                            <span id="short-title-{{ $post->id }}">{{ $shortTitle }}</span>
+                            @if($isLongTitle)
+                                <span id="full-title-{{ $post->id }}" class="hidden">{{ $post->title }}</span>
+                                ... <button onclick="toggleTitle({{ $post->id }})" class="text-red-500 hover:underline text-sm">Read more</button>
+                            @endif
                         </h2>
                         
                         <p class="text-gray-600 text-sm mb-2">
@@ -81,6 +90,11 @@
                         <p class="text-gray-400 text-xs">
                             Diunggah: {{ $post->created_at->diffForHumans() }}
                         </p>
+
+                        <a href="{{ route('posts.show', $post->id) }}" 
+                           class="block w-full text-center px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 mt-2">
+                            Lihat Selengkapnya
+                        </a>
                     </div>
                 </div>
             @endforeach

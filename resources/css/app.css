@@ -72,3 +72,10 @@ video {
     width: 100%;
     max-height: 400px;
 }
+
+.break-title {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+}

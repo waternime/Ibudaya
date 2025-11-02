@@ -599,3 +599,39 @@ button:active {
     transform: scale(0.95);
     transition: transform 0.1s;
 }
+
+.like-btn {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    cursor: pointer;
+    transition: transform 0.1s, color 0.2s;
+    color: inherit; /* default color */
+}
+
+.like-btn span {
+    color: inherit; /* angka tetap default */
+}
+
+/* Saat hover atau aktif, ubah warna hati saja */
+.like-btn:hover,
+.like-btn.liked {
+    color: red; /* hati dan angka ikut merah */
+}
+
+.like-btn:active {
+    transform: scale(0.95);
+}
+
+.comment-link {
+    color: inherit; /* default */
+    text-decoration: none;
+    transition: color 0.2s, transform 0.1s;
+    cursor: pointer;
+}
+
+.comment-link:hover,
+.comment-link:active {
+    color: green;       /* efek warna hijau saat hover/klik */
+    transform: scale(0.95); /* efek klik lembut */
+}
