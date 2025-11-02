@@ -90,13 +90,13 @@
                 @endphp
 
                 @if ($coverPath && !$isVideo)
-                    <div class="w-full bg-gray-100">
+                    <div class="w-full bg-gray-100" onclick="event.preventDefault(); openModal('{{ asset('storage/' . $post->cover_path) }}')">
                         <img src="{{ asset('storage/' . $coverPath) }}" class="w-full object-contain" loading="lazy">
                     </div>
                 @endif
 
                 @if ($isImage)
-                    <div class="w-full bg-gray-100">
+                    <div class="w-full bg-gray-100" onclick="event.preventDefault(); openModal('{{ asset('storage/' . $post->file_path) }}')">
                         <img src="{{ asset('storage/' . $filePath) }}" class="w-full object-contain" loading="lazy">
                     </div>
                 @endif
@@ -152,5 +152,11 @@
 
     {{-- Loader --}}
     <div id="loader" class="text-center py-4 hidden text-gray-500">⏳ Memuat postingan...</div>
+    
+    {{-- Modal Preview Gambar --}}
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4 transition-opacity duration-300">
+    <button class="absolute top-5 right-8 text-white text-3xl font-bold hover:text-red-400" onclick="closeModal()">❌</button>
+    <img id="modalImage" class="max-w-full max-h-[80vh] rounded shadow-lg object-contain transform transition-transform duration-300 scale-95 opacity-0" loading="lazy">
+</div>
 </div>
 @endsection
