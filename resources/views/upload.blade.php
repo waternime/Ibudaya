@@ -45,10 +45,10 @@
                 <option value="Aceh">Aceh</option>
                 <option value="Sumatera Utara">Sumatera Utara</option>
                 <option value="Sumatera Barat">Sumatera Barat</option>
+                <option value="Sumatera Selatan">Sumatera Selatan</option>
                 <option value="Riau">Riau</option>
                 <option value="Kepulauan Riau">Kepulauan Riau</option>
                 <option value="Jambi">Jambi</option>
-                <option value="Sumatera Selatan">Sumatera Selatan</option>
                 <option value="Bangka Belitung">Bangka Belitung</option>
                 <option value="Bengkulu">Bengkulu</option>
                 <option value="Lampung">Lampung</option>
@@ -66,8 +66,8 @@
                 <option value="Kalimantan Selatan">Kalimantan Selatan</option>
                 <option value="Kalimantan Timur">Kalimantan Timur</option>
                 <option value="Kalimantan Utara">Kalimantan Utara</option>
-                <option value="Sulawesi Utara">Sulawesi Utara</option>
                 <option value="Gorontalo">Gorontalo</option>
+                <option value="Sulawesi Utara">Sulawesi Utara</option>
                 <option value="Sulawesi Tengah">Sulawesi Tengah</option>
                 <option value="Sulawesi Barat">Sulawesi Barat</option>
                 <option value="Sulawesi Selatan">Sulawesi Selatan</option>

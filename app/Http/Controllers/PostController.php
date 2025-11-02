@@ -129,24 +129,25 @@ class PostController extends Controller
 
     public function latest(Request $request)
     {
-        $query = \App\Models\Post::query();
+        $query = Post::query();
 
-        if ($request->filled('province') && $request->province !== '__none__') {
+        // filter provinsi
+        if ($request->filled('province')) {
             $query->where('province', $request->province);
         }
 
-        if ($request->filled('category') && $request->category !== '__none__') {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->filled('file_category') && $request->file_category !== '__none__') {
+        // filter kategori budaya
+        if ($request->filled('file_category')) {
             $query->where('file_category', $request->file_category);
         }
 
-        // Pagination (10 per halaman)
+        // filter jenis file
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
         $posts = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        // Kalau request AJAX, kirim HTML sebagian aja
         if ($request->ajax()) {
             return view('posts.latest', compact('posts'))->render();
         }

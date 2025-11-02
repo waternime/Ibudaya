@@ -299,34 +299,34 @@ toggleBtn.addEventListener('click', () => {
 });
 </script>
 
-{{-- Script Infinite Scroll + Virtual Scroll --}}
+{{-- Script Infinite Scroll + Virtual Scroll Khusus Latest --}}
 <script>
-let page = 1;
-let loading = false;
 const postContainer = document.getElementById('post-container');
 const loader = document.getElementById('loader');
-const maxPostsInDOM = 100; // maksimal post yang tetap di DOM
+const filterForm = document.getElementById('filterForm');
 
-// simpan semua post yang sudah di-render
+let page = 2;
+let loading = false;
+const maxPostsInDOM = 100;
 let allPosts = [];
+let filterTimeout = null;
 
-window.addEventListener('scroll', () => {
-    const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+// Ambil semua parameter filter (province, file_category, category)
+function getFilterParams() {
+    const params = new URLSearchParams();
+    Array.from(filterForm.elements).forEach(el => {
+        if(el.name && el.value) params.append(el.name, el.value);
+    });
+    return params.toString();
+}
 
-    if (nearBottom && !loading) {
-        loadMore();
-    }
-
-    // virtual scroll: hapus postingan yang jauh dari viewport
-    virtualScrollCleanup();
-});
-
+// Load lebih banyak post
 function loadMore() {
+    if(loading) return;
     loading = true;
-    page++;
     loader.classList.remove('hidden');
 
-    fetch(`?page=${page}`)
+    fetch(`?page=${page}&${getFilterParams()}`, { headers: {'X-Requested-With':'XMLHttpRequest'} })
         .then(res => res.text())
         .then(html => {
             const parser = new DOMParser();
@@ -337,44 +337,132 @@ function loadMore() {
                 allPosts.push(post);
             });
 
-            // jika halaman baru kosong, stop scroll
-            if (newPosts.length === 0) {
-                window.removeEventListener('scroll', loadMore);
+            if(newPosts.length === 0) {
+                window.removeEventListener('scroll', handleScroll);
             }
 
-            // pastikan jumlah post di DOM tidak melebihi maxPostsInDOM
             virtualScrollCleanup();
         })
         .finally(() => {
             loader.classList.add('hidden');
             loading = false;
+            page++;
         });
 }
 
-function virtualScrollCleanup() {
-    const scrollTop = window.scrollY;
+// Virtual scroll cleanup
+function virtualScrollCleanup(){
     const windowHeight = window.innerHeight;
-
-    // hapus postingan yang terlalu jauh dari viewport (atas & bawah)
-    while (allPosts.length > maxPostsInDOM) {
+    while(allPosts.length > maxPostsInDOM){
         const firstPost = allPosts[0];
-        const lastPost = allPosts[allPosts.length - 1];
-
-        // cek posisi post
+        const lastPost = allPosts[allPosts.length-1];
         const firstRect = firstPost.getBoundingClientRect();
         const lastRect = lastPost.getBoundingClientRect();
 
-        if (firstRect.bottom < -windowHeight) {
+        if(firstRect.bottom < -windowHeight){
             postContainer.removeChild(firstPost);
             allPosts.shift();
-        } else if (lastRect.top > windowHeight * 2) {
+        } else if(lastRect.top > windowHeight * 2){
             postContainer.removeChild(lastPost);
             allPosts.pop();
-        } else {
-            break;
-        }
+        } else break;
     }
 }
+
+// Scroll listener
+function handleScroll(){
+    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !loading){
+        loadMore();
+    }
+    virtualScrollCleanup();
+}
+window.addEventListener('scroll', handleScroll);
+
+// Filter change (auto reload)
+filterForm.addEventListener('change', ()=>{
+    if(filterTimeout) clearTimeout(filterTimeout);
+    filterTimeout = setTimeout(()=>{
+        page = 1;
+        allPosts = [];
+        postContainer.innerHTML = '';
+        window.addEventListener('scroll', handleScroll);
+        loadMore();
+    }, 800);
+});
+</script>
+
+{{-- Script Infinite Scroll + Virtual Scroll Semua Halaman --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const postContainer = document.getElementById('post-container-all');
+    const loader = document.getElementById('loader');
+
+    if (!postContainer) return; // aman kalau elemen ga ada
+
+    let page = 2; // halaman pertama sudah di-load dari server
+    let loading = false;
+    const maxPostsInDOM = 100;
+    let allPosts = Array.from(postContainer.querySelectorAll('div')); // semua post awal
+
+    function virtualScrollCleanup() {
+        const windowHeight = window.innerHeight;
+        while (allPosts.length > maxPostsInDOM) {
+            const firstPost = allPosts[0];
+            const lastPost = allPosts[allPosts.length - 1];
+            const firstRect = firstPost.getBoundingClientRect();
+            const lastRect = lastPost.getBoundingClientRect();
+
+            if (firstRect.bottom < -windowHeight) {
+                postContainer.removeChild(firstPost);
+                allPosts.shift();
+            } else if (lastRect.top > windowHeight * 2) {
+                postContainer.removeChild(lastPost);
+                allPosts.pop();
+            } else break;
+        }
+    }
+
+    function loadMore() {
+        if (loading) return;
+        loading = true;
+        loader.classList.remove('hidden');
+
+        const url = `?page=${page}`;
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const newPosts = parser
+                    .parseFromString(html, 'text/html')
+                    .querySelectorAll('#post-container-all > div');
+
+                if (newPosts.length === 0) {
+                    window.removeEventListener('scroll', handleScroll);
+                }
+
+                newPosts.forEach(post => {
+                    postContainer.appendChild(post);
+                    allPosts.push(post);
+                });
+
+                virtualScrollCleanup();
+            })
+            .finally(() => {
+                loader.classList.add('hidden');
+                loading = false;
+                page++;
+            });
+    }
+
+    function handleScroll() {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !loading) {
+            loadMore();
+        }
+        virtualScrollCleanup();
+    }
+
+    window.addEventListener('scroll', handleScroll);
+});
 </script>
 
 {{-- Script Video Player --}}

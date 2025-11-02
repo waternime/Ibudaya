@@ -3,7 +3,7 @@
 @section('title', 'Dokumen')
 
 @section('content')
-<div id="post-container" class="max-w-2xl mx-auto">
+<div id="post-container-all" class="max-w-2xl mx-auto">
     <h2 class="text-2xl font-bold mb-6 text-center">📄 Feed Dokumen</h2>
 
     @forelse($posts as $post)
