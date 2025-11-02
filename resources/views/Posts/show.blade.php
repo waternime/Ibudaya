@@ -8,12 +8,33 @@
     {{-- Postingan --}}
     <div class="mb-10 border rounded-lg shadow bg-white overflow-hidden">
         {{-- Header --}}
-        <div class="flex items-center justify-between px-4 py-3 border-b">
-            <p class="font-semibold">{{ $post->title }}</p>
-            <span class="text-xs px-2 py-1 bg-gray-200 rounded">
-                {{ ucfirst($post->category) }}
-            </span>
-        </div>
+                <div class="px-4 py-3 border-b">
+                    {{-- Judul dengan read more (berdasarkan jumlah karakter) --}}
+                    @php
+                        $maxLength = 50; // batas karakter sebelum Read more muncul
+                        $isLongTitle = strlen($post->title) > $maxLength;
+                        $shortTitle = Str::limit($post->title, $maxLength, '');
+                    @endphp
+
+                    <p class="text-lg font-semibold mb-1 break-title">
+                        <span id="short-title-{{ $post->id }}">{{ $shortTitle }}</span>
+                        @if($isLongTitle)
+                            <span id="full-title-{{ $post->id }}" class="hidden">{{ $post->title }}</span>
+                            ... 
+                            <button class="text-blue-500 hover:underline text-sm"
+                                    onclick="event.stopPropagation(); toggleTitle({{ $post->id }});">
+                                Read more
+                            </button>
+                        @endif
+                    </p>
+
+                    {{-- Info tambahan di bawah judul --}}
+                    <div class="text-xs text-gray-500 space-x-2">
+                        <span>📌 {{ ucfirst($post->province) ?? 'Umum' }}</span>
+                        <span>🎭 {{ ucfirst($post->file_category) ?? 'Tidak ada kategori' }}</span>
+                        <span class="px-2 py-1 bg-gray-200 rounded">{{ ucfirst($post->category) }}</span>
+                    </div>
+                </div>
 
         {{-- Media --}}
         @php
