@@ -313,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const loader = document.getElementById('loader');
     const filterForm = document.getElementById('filterForm');
 
-    let page = 1;
+    let page = 2;
     let loading = false;
     const maxPostsInDOM = 100;
     let allPosts = Array.from(postContainer.querySelectorAll('div'));
