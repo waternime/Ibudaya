@@ -251,143 +251,211 @@ document.querySelectorAll('.like-btn, .comment-link').forEach(btn=>{
 });
 </script>
 
-<!-- JS Sidebar -->
+{{-- Script Video Player --}}
 <script>
-const menuToggle = document.querySelector('.menu-toggle');
-const sidebar = document.querySelector('.sidebar');
-const overlay = document.querySelector('.overlay');
-const sidebarLinks = document.querySelectorAll('.sidebar a');
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.video-player').forEach(video => {
+        const container = video.closest('.group');
+        const overlay = container?.querySelector('.video-overlay');
+        let hasPlayed = false;
 
-menuToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('active');
-    overlay.classList.toggle('active');
-});
+        // Awalnya sembunyikan kontrol video
+        video.controls = false;
 
-overlay.addEventListener('click', () => {
-    sidebar.classList.remove('active');
-    overlay.classList.remove('active');
-});
+        video.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
 
-sidebarLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
+            if (video.paused) {
+                // Pause semua video lain
+                document.querySelectorAll('.video-player').forEach(v => {
+                    if (v !== video) {
+                        v.pause();
+                        v.controls = false;
+                    }
+                });
+
+                // Aktifkan kontrol & mainkan video
+                video.controls = true;
+                video.play();
+
+                // Hilangkan overlay dengan animasi halus
+                if (overlay) overlay.classList.add('opacity-0');
+                hasPlayed = true;
+            } else {
+                video.pause();
+            }
+        });
+
+        // Saat video selesai
+        video.addEventListener('ended', () => {
+            // Setelah selesai, sembunyikan kembali kontrol
+            video.controls = false;
+        });
+
+        // Saat video pertama kali diputar
+        video.addEventListener('playing', () => {
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 400); // tunggu animasi fade-out
+            }
+        });
     });
 });
 </script>
 
+{{-- Script Video Player + Infinite Scroll + Virtual Scroll Khusus Latest --}}
 <script>
-// Toggle Dark/Light Mode
-const toggleBtn = document.getElementById('theme-toggle');
-const body = document.body;
+document.addEventListener('DOMContentLoaded', function () {
+    const postContainer = document.getElementById('post-container');
+    const loader = document.getElementById('loader');
+    const filterForm = document.getElementById('filterForm');
 
-// cek preferensi dari localStorage
-if(localStorage.getItem('theme') === 'dark'){
-    body.classList.add('dark-mode');
-    toggleBtn.textContent = '☀️';
-}
+    let page = 1;
+    let loading = false;
+    const maxPostsInDOM = 100;
+    let allPosts = Array.from(postContainer.querySelectorAll('div'));
+    let filterTimeout = null;
 
-toggleBtn.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
-    if(body.classList.contains('dark-mode')){
-        toggleBtn.textContent = '☀️';
-        localStorage.setItem('theme','dark');
-    } else {
-        toggleBtn.textContent = '🌙';
-        localStorage.setItem('theme','light');
+    // Ambil semua filter params
+    function getFilterParams() {
+        const params = new URLSearchParams();
+        Array.from(filterForm.elements).forEach(el => {
+            if(el.name && el.value) params.append(el.name, el.value);
+        });
+        return params.toString();
     }
-});
-</script>
 
-{{-- Script Infinite Scroll + Virtual Scroll Khusus Latest --}}
-<script>
-const postContainer = document.getElementById('post-container');
-const loader = document.getElementById('loader');
-const filterForm = document.getElementById('filterForm');
+    // Virtual Scroll Cleanup
+    function virtualScrollCleanup(){
+        const windowHeight = window.innerHeight;
+        while(allPosts.length > maxPostsInDOM){
+            const firstPost = allPosts[0];
+            const lastPost = allPosts[allPosts.length-1];
+            const firstRect = firstPost.getBoundingClientRect();
+            const lastRect = lastPost.getBoundingClientRect();
 
-let page = 2;
-let loading = false;
-const maxPostsInDOM = 100;
-let allPosts = [];
-let filterTimeout = null;
+            if(firstRect.bottom < -windowHeight){
+                postContainer.removeChild(firstPost);
+                allPosts.shift();
+            } else if(lastRect.top > windowHeight * 2){
+                postContainer.removeChild(lastPost);
+                allPosts.pop();
+            } else break;
+        }
+    }
 
-// Ambil semua parameter filter (province, file_category, category)
-function getFilterParams() {
-    const params = new URLSearchParams();
-    Array.from(filterForm.elements).forEach(el => {
-        if(el.name && el.value) params.append(el.name, el.value);
-    });
-    return params.toString();
-}
+    // Inisialisasi Video & Musik untuk post
+    function initPost(post){
+        // Musik
+        post.querySelectorAll('.music-track').forEach(el=>{
+            el.onclick = ()=>{
+                const audio = document.getElementById('main-audio');
+                audio.src = el.dataset.src;
+                document.getElementById('track-title').textContent = el.dataset.title;
+                audio.play();
+                document.getElementById('audio-player').classList.remove('hidden');
+                document.getElementById('play-btn').textContent = '⏸️';
+            }
+        });
 
-// Load lebih banyak post
-function loadMore() {
-    if(loading) return;
-    loading = true;
-    loader.classList.remove('hidden');
+        // Video
+        post.querySelectorAll('.video-player').forEach(video=>{
+            const overlay = video.closest('.group')?.querySelector('.video-overlay');
+            video.controls = false;
 
-    fetch(`?page=${page}&${getFilterParams()}`, { headers: {'X-Requested-With':'XMLHttpRequest'} })
-        .then(res => res.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const newPosts = parser.parseFromString(html, 'text/html').querySelectorAll('#post-container > div');
+            video.addEventListener('click', e=>{
+                e.stopPropagation();
+                if(video.paused){
+                    // pause semua video lain
+                    document.querySelectorAll('#post-container .video-player').forEach(v=>{
+                        if(v !== video){
+                            v.pause();
+                            v.controls = false;
+                        }
+                    });
 
-            newPosts.forEach(post => {
-                postContainer.appendChild(post);
-                allPosts.push(post);
+                    // play current
+                    video.play();
+                    video.controls = true;
+                    if(overlay){
+                        overlay.style.transition = 'opacity 0.4s';
+                        overlay.style.opacity = '0';
+                        setTimeout(()=> overlay.style.display='none', 400);
+                    }
+                } else {
+                    video.pause();
+                }
             });
 
-            if(newPosts.length === 0) {
-                window.removeEventListener('scroll', handleScroll);
-            }
+            video.addEventListener('ended', ()=>{
+                video.controls = false;
+                if(overlay) overlay.style.display = '';
+            });
 
-            virtualScrollCleanup();
-        })
-        .finally(() => {
-            loader.classList.add('hidden');
-            loading = false;
-            page++;
+            video.addEventListener('playing', ()=>{
+                if(overlay){
+                    overlay.style.transition = 'opacity 0.4s';
+                    overlay.style.opacity = '0';
+                    setTimeout(()=> overlay.style.display='none', 400);
+                }
+            });
         });
-}
-
-// Virtual scroll cleanup
-function virtualScrollCleanup(){
-    const windowHeight = window.innerHeight;
-    while(allPosts.length > maxPostsInDOM){
-        const firstPost = allPosts[0];
-        const lastPost = allPosts[allPosts.length-1];
-        const firstRect = firstPost.getBoundingClientRect();
-        const lastRect = lastPost.getBoundingClientRect();
-
-        if(firstRect.bottom < -windowHeight){
-            postContainer.removeChild(firstPost);
-            allPosts.shift();
-        } else if(lastRect.top > windowHeight * 2){
-            postContainer.removeChild(lastPost);
-            allPosts.pop();
-        } else break;
     }
-}
 
-// Scroll listener
-function handleScroll(){
-    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !loading){
-        loadMore();
+    // Init post awal
+    allPosts.forEach(post=>initPost(post));
+
+    // Load more
+    function loadMore(){
+        if(loading) return;
+        loading = true;
+        loader.classList.remove('hidden');
+
+        fetch(`?page=${page}&${getFilterParams()}`, {headers:{'X-Requested-With':'XMLHttpRequest'}})
+            .then(res=>res.text())
+            .then(html=>{
+                const parser = new DOMParser();
+                const newPosts = parser.parseFromString(html,'text/html').querySelectorAll('#post-container > div');
+                if(newPosts.length===0) window.removeEventListener('scroll', handleScroll);
+
+                newPosts.forEach(post=>{
+                    postContainer.appendChild(post);
+                    allPosts.push(post);
+                    initPost(post);
+                });
+
+                virtualScrollCleanup();
+            })
+            .finally(()=>{
+                loader.classList.add('hidden');
+                loading = false;
+                page++;
+            });
     }
-    virtualScrollCleanup();
-}
-window.addEventListener('scroll', handleScroll);
 
-// Filter change (auto reload)
-filterForm.addEventListener('change', ()=>{
-    if(filterTimeout) clearTimeout(filterTimeout);
-    filterTimeout = setTimeout(()=>{
-        page = 1;
-        allPosts = [];
-        postContainer.innerHTML = '';
-        window.addEventListener('scroll', handleScroll);
-        loadMore();
-    }, 800);
+    // Scroll listener
+    function handleScroll(){
+        if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !loading){
+            loadMore();
+        }
+        virtualScrollCleanup();
+    }
+    window.addEventListener('scroll', handleScroll);
+
+    // Filter change
+    filterForm.addEventListener('change', ()=>{
+        if(filterTimeout) clearTimeout(filterTimeout);
+        filterTimeout = setTimeout(()=>{
+            page = 1;
+            allPosts = [];
+            postContainer.innerHTML = '';
+            window.addEventListener('scroll', handleScroll);
+            loadMore();
+        }, 800);
+    });
 });
 </script>
 
@@ -465,58 +533,51 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-{{-- Script Video Player --}}
+<!-- JS Sidebar -->
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.video-player').forEach(video => {
-        const container = video.closest('.group');
-        const overlay = container?.querySelector('.video-overlay');
-        let hasPlayed = false;
+const menuToggle = document.querySelector('.menu-toggle');
+const sidebar = document.querySelector('.sidebar');
+const overlay = document.querySelector('.overlay');
+const sidebarLinks = document.querySelectorAll('.sidebar a');
 
-        // Awalnya sembunyikan kontrol video
-        video.controls = false;
+menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+});
 
-        video.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
+overlay.addEventListener('click', () => {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+});
 
-            if (video.paused) {
-                // Pause semua video lain
-                document.querySelectorAll('.video-player').forEach(v => {
-                    if (v !== video) {
-                        v.pause();
-                        v.controls = false;
-                    }
-                });
-
-                // Aktifkan kontrol & mainkan video
-                video.controls = true;
-                video.play();
-
-                // Hilangkan overlay dengan animasi halus
-                if (overlay) overlay.classList.add('opacity-0');
-                hasPlayed = true;
-            } else {
-                video.pause();
-            }
-        });
-
-        // Saat video selesai
-        video.addEventListener('ended', () => {
-            // Setelah selesai, sembunyikan kembali kontrol
-            video.controls = false;
-        });
-
-        // Saat video pertama kali diputar
-        video.addEventListener('playing', () => {
-            if (overlay) {
-                overlay.style.opacity = '0';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                }, 400); // tunggu animasi fade-out
-            }
-        });
+sidebarLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
     });
+});
+</script>
+
+<script>
+// Toggle Dark/Light Mode
+const toggleBtn = document.getElementById('theme-toggle');
+const body = document.body;
+
+// cek preferensi dari localStorage
+if(localStorage.getItem('theme') === 'dark'){
+    body.classList.add('dark-mode');
+    toggleBtn.textContent = '☀️';
+}
+
+toggleBtn.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if(body.classList.contains('dark-mode')){
+        toggleBtn.textContent = '☀️';
+        localStorage.setItem('theme','dark');
+    } else {
+        toggleBtn.textContent = '🌙';
+        localStorage.setItem('theme','light');
+    }
 });
 </script>
 

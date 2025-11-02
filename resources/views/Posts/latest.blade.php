@@ -101,22 +101,39 @@
                     </div>
                 @endif
 
+                {{-- Musik --}}
                 @if ($isMusic)
                     <div class="px-4 py-3 border-b">
-                        <button class="music-track w-full text-center px-3 py-2 bg-purple-600 text-white text-sm rounded hover:bg-purple-700"
-                                data-src="{{ asset('storage/' . $filePath) }}"
-                                data-title="{{ $post->title }}">
+                        <button class="music-track w-full px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                            data-src="{{ asset('storage/' . $filePath) }}" data-title="{{ $post->title }}">
                             🎵 Putar Musik
                         </button>
                     </div>
                 @endif
 
+                {{-- Video dengan cover (thumbnail) --}}
                 @if ($isVideo)
+                    {{-- Wrapper video interaktif --}}
                     <div class="w-full bg-black flex justify-center relative overflow-hidden group rounded-b-lg">
-                        <video preload="metadata" playsinline class="video-player max-h-[500px] object-contain w-full rounded-b cursor-pointer transition-transform duration-200 group-hover:scale-[1.02]"
-                               poster="{{ $coverPath ? asset('storage/' . $coverPath) : '' }}" controlslist="nodownload">
+                        
+                        {{-- Video --}}
+                        <video 
+                            preload="metadata" 
+                            playsinline 
+                            class="video-player max-h-[500px] object-contain w-full rounded-b cursor-pointer transition-transform duration-200 group-hover:scale-[1.02]" 
+                            poster="{{ $coverPath ? asset('storage/' . $coverPath) : '' }}"
+                            loading="lazy"
+                            onclick="event.preventDefault(); event.stopPropagation();"
+                            controlslist="nodownload"
+                        >
                             <source src="{{ asset('storage/' . $filePath) }}" type="video/mp4">
+                            Browser kamu tidak mendukung video.
                         </video>
+
+                        {{-- Overlay ▶️ tampil sebelum video diputar, lalu hilang permanen --}}
+                        <div class="video-overlay absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity duration-500 opacity-0 group-hover:opacity-100 pointer-events-none">
+                            <span class="text-white text-5xl">▶︎</span>
+                        </div>
                     </div>
                 @endif
 
@@ -152,7 +169,7 @@
 
     {{-- Loader --}}
     <div id="loader" class="text-center py-4 hidden text-gray-500">⏳ Memuat postingan...</div>
-    
+
     {{-- Modal Preview Gambar --}}
 <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4 transition-opacity duration-300">
     <button class="absolute top-5 right-8 text-white text-3xl font-bold hover:text-red-400" onclick="closeModal()">❌</button>

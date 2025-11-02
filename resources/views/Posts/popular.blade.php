@@ -32,8 +32,9 @@
                     {{-- Cover atau file image --}}
                     @if ($coverPath)
                         <div class="w-full bg-gray-100 flex justify-center relative">
-                            <img src="{{ asset('storage/' . $coverPath) }}" 
-                                 alt="Cover {{ $post->title }}" 
+                            <img src="{{ asset('storage/' . $coverPath) }}"
+                                 alt="Cover {{ $post->title }}"
+                                 loading="lazy"
                                  class="w-full h-48 object-contain">
 
                             {{-- Nomor Ranking --}}
@@ -43,8 +44,9 @@
                         </div>
                     @elseif ($post->category === 'images' && $isImage)
                         <div class="w-full bg-gray-100 flex justify-center relative">
-                            <img src="{{ asset('storage/' . $filePath) }}" 
+                            <img src="{{ asset('storage/' . $filePath) }}"
                                  alt="{{ $post->title }}" 
+                                 loading="lazy"
                                  class="w-full h-48 object-contain">
 
                             {{-- Nomor Ranking --}}

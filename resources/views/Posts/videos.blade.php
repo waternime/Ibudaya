@@ -44,6 +44,7 @@
                             playsinline 
                             class="video-player max-h-[500px] object-contain w-full rounded-b cursor-pointer transition-transform duration-200 group-hover:scale-[1.02]" 
                             poster="{{ $post->cover_path ? asset('storage/' . $post->cover_path) : '' }}"
+                            loading="lazy"
                             onclick="event.preventDefault(); event.stopPropagation();"
                             controlslist="nodownload"
                         >

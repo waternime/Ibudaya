@@ -51,6 +51,7 @@
             <img src="{{ asset('storage/' . $coverPath) }}" 
                  class="w-full object-contain cursor-pointer"
                  alt="Cover"
+                 loading="lazy"
                  onclick="openModal('{{ asset('storage/' . $coverPath) }}')">
         @endif
 
@@ -59,6 +60,7 @@
             <img src="{{ asset('storage/' . $filePath) }}" 
                  class="w-full object-contain cursor-pointer"
                  alt="Image"
+                 loading="lazy"
                  onclick="openModal('{{ asset('storage/' . $filePath) }}')">
         @endif
 
@@ -83,6 +85,7 @@
                     playsinline 
                     class="video-player max-h-[500px] object-contain w-full rounded-b cursor-pointer transition-transform duration-200 group-hover:scale-[1.02]" 
                     poster="{{ $coverPath ? asset('storage/' . $coverPath) : '' }}"
+                    loading="lazy"
                     onclick="event.preventDefault(); event.stopPropagation();"
                     controlslist="nodownload"
                 >
@@ -150,7 +153,7 @@
                 echo '<div class="ml-4 mt-3 p-3 rounded-lg border shadow-sm comment-reply">';
                     echo '<div class="flex items-start gap-3">';
                         if ($reply->user->profile_picture) {
-                            echo '<img src="'.asset('storage/'.$reply->user->profile_picture).'" class="w-8 h-8 rounded-full object-cover border">';
+                            echo '<img src="'.asset('storage/'.$reply->user->profile_picture).'" class="w-8 h-8 rounded-full object-cover border" loading="lazy">';
                         } else {
                             echo '<div class="w-8 h-8 flex items-center justify-center bg-gray-300 dark:bg-gray-600 rounded-full text-sm">👤</div>';
                         }
@@ -193,7 +196,7 @@
             <div class="mb-4 p-4 rounded-lg border shadow-sm comment-box">
                 <div class="flex items-start gap-3">
                     @if($comment->user->profile_picture)
-                        <img src="{{ asset('storage/' . $comment->user->profile_picture) }}" class="w-10 h-10 rounded-full object-cover border">
+                        <img src="{{ asset('storage/' . $comment->user->profile_picture) }}" class="w-10 h-10 rounded-full object-cover border" loading="lazy">
                     @else
                         <div class="w-10 h-10 flex items-center justify-center bg-gray-300 dark:bg-gray-600 rounded-full text-lg">👤</div>
                     @endif
@@ -250,7 +253,7 @@
     {{-- Modal Preview Gambar --}}
     <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
         <button class="absolute top-5 right-8 text-white text-3xl font-bold" onclick="closeModal()">❌</button>
-        <img id="modalImage" class="max-w-full max-h-[80vh] rounded shadow-lg object-contain">
+        <img id="modalImage" class="max-w-full max-h-[80vh] rounded shadow-lg object-contain" loading="lazy">
     </div>
 
     <script>

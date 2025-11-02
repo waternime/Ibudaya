@@ -9,7 +9,8 @@
         {{-- Foto Profil --}}
         @if(Auth::user()->profile_picture)
             <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" 
-                 alt="Foto Profil {{ Auth::user()->name }}" 
+                 alt="Foto Profil {{ Auth::user()->name }}"
+                 loading="lazy"
                  class="w-16 h-16 rounded-full object-cover border">
         @else
             <div class="w-16 h-16 flex items-center justify-center bg-gray-300 rounded-full text-2xl">
@@ -68,10 +69,12 @@
                     @if($coverPath)
                         <img src="{{ asset('storage/' . $coverPath) }}" 
                              alt="Cover {{ $post->title }}" 
+                             loading="lazy"
                              class="w-full h-48 object-contain">
                     @elseif($post->category === 'images' && $isImage)
                         <img src="{{ asset('storage/' . $filePath) }}" 
-                             alt="{{ $post->title }}" 
+                             alt="{{ $post->title }}"
+                             loading="lazy"
                              class="w-full h-48 object-contain">
                     @elseif($post->category === 'videos' && $filePath)
                         <div class="w-full h-48 flex flex-col justify-center items-center bg-gray-100 dark:bg-gray-700 text-center">
