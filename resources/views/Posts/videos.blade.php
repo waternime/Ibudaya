@@ -24,7 +24,7 @@
                             <span id="short-title-{{ $post->id }}">{{ $shortTitle }}</span>
                             @if($isLongTitle)
                                 <span id="full-title-{{ $post->id }}" class="hidden">{{ $post->title }}</span>
-                                ... <button onclick="toggleTitle({{ $post->id }})" class="text-blue-500 hover:underline text-sm">Read more</button>
+                                ... <button onclick="toggleTitle({{ $post->id }})" class="text-red-500 hover:underline text-sm">Read more</button>
                             @endif
                         </p>
 

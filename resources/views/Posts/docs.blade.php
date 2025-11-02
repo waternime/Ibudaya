@@ -24,7 +24,7 @@
                         @if($isLongTitle)
                             <span id="full-title-{{ $post->id }}" class="hidden">{{ $post->title }}</span>
                             ... 
-                            <button class="text-blue-500 hover:underline text-sm"
+                            <button class="text-red-500 hover:underline text-sm"
                                     onclick="event.stopPropagation(); toggleTitle({{ $post->id }});">
                                 Read more
                             </button>

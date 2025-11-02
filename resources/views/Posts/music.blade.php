@@ -13,7 +13,20 @@
                  data-title="{{ $post->title }}">
                  
                 <div class="track-info">
-                    <h3>{{ $post->title }}</h3>
+                    {{-- Judul dengan read more (berdasarkan jumlah karakter) --}}
+                        @php
+                            $maxLength = 40; // batas karakter sebelum Read more muncul
+                            $isLongTitle = strlen($post->title) > $maxLength;
+                            $shortTitle = Str::limit($post->title, $maxLength, '');
+                        @endphp
+
+                        <h2 class="text-lg font-semibold mb-2 text-gray-900 dark:text-white break-title">
+                            <span id="short-title-{{ $post->id }}">{{ $shortTitle }}</span>
+                            @if($isLongTitle)
+                                <span id="full-title-{{ $post->id }}" class="hidden">{{ $post->title }}</span>
+                                ... <button onclick="toggleTitle({{ $post->id }})" class="text-red-500 hover:underline text-sm">Read more</button>
+                            @endif
+                        </h2>
                     <p>Klik untuk memutar</p>
                 </div>
                 <div class="mt-3 flex justify-between">
