@@ -115,7 +115,7 @@
                 @if($isImage)
                     <img src="{{ asset('storage/' . $post->file_path) }}" alt="File Lama" class="w-full h-48 object-contain mb-2">
                 @else
-                    <a href="{{ asset('storage/' . $post->file_path) }}" target="_blank" class="text-blue-600 hover:underline">
+                    <a href="{{ asset('storage/' . $post->file_path) }}" target="_blank" class="text-red-600 hover:underline">
                         Lihat File Saat Ini
                     </a>
                 @endif

@@ -627,46 +627,5 @@ function toggleTitle(id) {
     }
 }
 </script>
-
-{{-- Script Filter Profile --}}
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const buttons = document.querySelectorAll('.filter-btn');
-    const posts = document.querySelectorAll('.post-item');
-
-    // pastikan tombol "Semua" aktif saat load
-    buttons.forEach(b => {
-        if(b.getAttribute('data-filter') === 'all') {
-            b.classList.add('bg-red-600', 'text-white');
-            b.classList.remove('bg-gray-200', 'text-gray-700');
-        }
-    });
-
-    buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const filter = btn.getAttribute('data-filter');
-
-            // reset semua tombol
-            buttons.forEach(b => {
-                b.classList.remove('bg-red-600', 'text-white');
-                b.classList.add('bg-gray-200', 'text-gray-700');
-            });
-
-            // set tombol aktif
-            btn.classList.add('bg-red-600', 'text-white');
-            btn.classList.remove('bg-gray-200', 'text-gray-700');
-
-            // tampilkan/sembunyikan postingan
-            posts.forEach(post => {
-                if (filter === 'all' || post.dataset.category === filter) {
-                    post.classList.remove('hidden');
-                } else {
-                    post.classList.add('hidden');
-                }
-            });
-        });
-    });
-});
-</script>
 </body>
 </html>

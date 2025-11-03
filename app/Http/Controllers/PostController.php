@@ -293,7 +293,7 @@ class PostController extends Controller
             $query->where('category', $request->filter);
         }
 
-        $posts = $query->orderBy('created_at', 'desc')->paginate(12);
+        $posts = $query->orderBy('created_at', 'desc')->paginate(9);
 
         return view('profile', compact('posts'));
     }
