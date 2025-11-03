@@ -17,7 +17,8 @@ class PostController extends Controller
         $posts = Post::when($query, function($q) use ($query) {
             $q->where('title', 'like', "%{$query}%")
               ->orWhere('id', $query);
-        })->orderBy('created_at', 'desc')->paginate(10);
+        })->orderBy('created_at', 'desc')->paginate(10)
+        ->appends(['search' => $query]);
 
         return view('Posts.index', compact('posts'));
     }
@@ -30,7 +31,8 @@ class PostController extends Controller
         $posts = Post::when($query, function($q) use ($query) {
             $q->where('title', 'like', "%{$query}%")
               ->orWhere('id', $query);
-        })->orderBy('created_at', 'desc')->paginate(10);
+        })->orderBy('created_at', 'desc')->paginate(10)
+        ->appends(['search' => $query]);
 
         return view('Posts.search', compact('posts'));
     }
