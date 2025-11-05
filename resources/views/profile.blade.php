@@ -134,6 +134,7 @@
                             <form action="{{ route('posts.destroy', $post->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus postingan ini?');">
                                 @csrf
                                 @method('DELETE')
+                                <input type="hidden" name="redirect_to" value="{{ route('profile') }}">
                                 <button type="submit" 
                                         class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs">
                                     🗑️ Hapus

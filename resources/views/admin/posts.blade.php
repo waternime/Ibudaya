@@ -136,6 +136,7 @@
                             onsubmit="return confirm('Yakin mau hapus postingan ini?')">
                             @csrf
                             @method('DELETE')
+                            <input type="hidden" name="redirect_to" value="{{ route('admin.posts.index') }}">
                             <button type="submit" class="bg-red-500 hover:bg-red-600 text-white w-full py-2 rounded">
                                 Hapus
                             </button>

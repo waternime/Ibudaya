@@ -356,24 +356,28 @@ class PostController extends Controller
         return redirect()->route('profile')->with('success', 'Postingan berhasil diperbarui.');
     }
 
-    // Hapus postingan
-    public function destroy(Post $post)
+    public function destroy(Request $request, Post $post)
     {
-        if ($post->user_id !== auth()->id()) {
+        $user = auth()->user();
+
+        // Cek izin
+        if ($user->role !== 'admin' && $post->user_id !== $user->id) {
             abort(403, 'Aksi tidak diizinkan.');
         }
 
-        if ($post->file_path && Storage::exists('public/' . $post->file_path)) {
-            Storage::delete('public/' . $post->file_path);
+        // Hapus file terkait
+        if ($post->file_path && \Storage::exists('public/' . $post->file_path)) {
+            \Storage::delete('public/' . $post->file_path);
         }
-
-        if ($post->cover_path && Storage::exists('public/' . $post->cover_path)) {
-            Storage::delete('public/' . $post->cover_path);
+        if ($post->cover_path && \Storage::exists('public/' . $post->cover_path)) {
+            \Storage::delete('public/' . $post->cover_path);
         }
 
         $post->delete();
 
-        return redirect()->route('profile')->with('success', 'Postingan berhasil dihapus.');
+        // Redirect ke halaman asal
+        $redirect = $request->input('redirect_to', route('profile')); // default ke profile
+        return redirect($redirect)->with('success', 'Postingan berhasil dihapus.');
     }
 
     // Detail postingan

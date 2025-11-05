@@ -16,7 +16,7 @@
         <!-- Kiri: Logo desktop -->
         <div class="hidden md:flex items-center">
             <a href="{{ route('posts.latest') }}">
-                <img src="{{ asset('images/logo.png') }}" alt="Indonesia Culture" class="h-8">
+                <img src="{{ asset('images/logo.png') }}" alt="Ibudya" class="h-8">
             </a>
         </div>
 

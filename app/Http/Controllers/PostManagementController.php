@@ -18,7 +18,7 @@ class PostManagementController extends Controller
                 ->orWhere('id', $search);
         }
 
-        $posts = $query->orderBy('created_at', 'desc')->paginate(20);
+        $posts = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('admin.posts', compact('posts'));
     }
