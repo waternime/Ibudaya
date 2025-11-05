@@ -68,8 +68,9 @@
         @if ($isMusic)
             <div class="px-4 py-3 border-b">
                 <button class="music-track w-full px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-                    data-src="{{ asset('storage/' . $filePath) }}" data-title="{{ $post->title }}">
-                    🎵 Putar Musik
+                data-src="{{ route('audio.stream', basename($post->file_path)) }}"
+                data-title="{{ $post->title }}">
+                🎵 Putar Musik
                 </button>
             </div>
         @endif
@@ -78,7 +79,7 @@
         @if ($isVideo)
             {{-- Wrapper video interaktif --}}
             <div class="w-full bg-black flex justify-center relative overflow-hidden group rounded-b-lg">
-                
+
                 {{-- Video --}}
                 <video 
                     preload="metadata" 
@@ -88,8 +89,9 @@
                     loading="lazy"
                     onclick="event.preventDefault(); event.stopPropagation();"
                     controlslist="nodownload"
+                    controls
                 >
-                    <source src="{{ asset('storage/' . $filePath) }}" type="video/mp4">
+                    <source src="{{ route('video.stream', basename($post->file_path)) }}" type="video/mp4">
                     Browser kamu tidak mendukung video.
                 </video>
 
@@ -255,35 +257,5 @@
         <button class="absolute top-5 right-8 text-white text-3xl font-bold" onclick="closeModal()">❌</button>
         <img id="modalImage" class="max-w-full max-h-[80vh] rounded shadow-lg object-contain" loading="lazy">
     </div>
-
-    <script>
-        function toggleElement(id) {
-            const el = document.getElementById(id);
-            if (el) el.classList.toggle('hidden');
-        }
-
-        function openModal(src) {
-            document.getElementById('modalImage').src = src;
-            const modal = document.getElementById('imageModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('imageModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function playVideo() {
-            const cover = document.getElementById('videoCover');
-            const video = document.getElementById('videoPlayer');
-            if (cover && video) {
-                cover.classList.add('hidden');
-                video.classList.remove('hidden');
-                video.play();
-            }
-        }
-    </script>
 </div>
 @endsection

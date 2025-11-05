@@ -39,6 +39,7 @@
 
                     {{-- Video utama --}}
                     <div class="w-full bg-black flex justify-center relative overflow-hidden group rounded-b-lg">
+                        {{-- Video --}}
                         <video 
                             preload="metadata" 
                             playsinline 
@@ -47,8 +48,9 @@
                             loading="lazy"
                             onclick="event.preventDefault(); event.stopPropagation();"
                             controlslist="nodownload"
+                            controls
                         >
-                            <source src="{{ asset('storage/' . $post->file_path) }}" type="video/mp4">
+                            <source src="{{ route('video.stream', basename($post->file_path)) }}" type="video/mp4">
                             Browser kamu tidak mendukung video.
                         </video>
 

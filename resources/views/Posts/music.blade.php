@@ -9,7 +9,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         @foreach($posts as $post)
             <div class="music-track p-4 border rounded-lg hover:bg-gray-100 cursor-pointer flex flex-col justify-between"
-                 data-src="{{ asset('storage/' . $post->file_path) }}"
+                 data-src="{{ route('audio.stream', basename($post->file_path)) }}"
                  data-title="{{ $post->title }}">
                  
                 <div class="track-info">

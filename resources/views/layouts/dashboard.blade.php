@@ -51,7 +51,7 @@
                         ➕ <span class="hidden sm:inline">Buat</span>
                     </a>
 
-                    <a href="{{ route('notifications') }}" class="text-2xl hover:text-blue-600">
+                    <a href="{{ route('notifications') }}" class="text-2xl hover:text-red-600">
                         🔔
                     </a>
 
@@ -164,22 +164,27 @@
 <!-- Mini Audio Player -->
 <div id="audio-player" class="fixed bottom-0 left-0 w-full bg-gray-900 text-white flex items-center justify-between p-3 z-50 shadow-lg hidden">
     <div class="flex items-center space-x-3 w-full">
-        <button id="prev-btn" class="px-2 py-1 bg-gray-700 rounded hover:bg-gray-600">⏮️</button>
+        <!-- Play/Pause -->
         <button id="play-btn" class="px-2 py-1 bg-gray-700 rounded hover:bg-gray-600">▶️</button>
-        <button id="next-btn" class="px-2 py-1 bg-gray-700 rounded hover:bg-gray-600">⏭️</button>
 
+        <!-- Progress & Time -->
         <div class="flex-1 mx-3 flex items-center space-x-2">
             <span id="current-time" class="text-xs">0:00</span>
             <input type="range" id="progress-bar" min="0" max="100" value="0" class="w-full h-1 rounded-lg bg-gray-600 accent-purple-500">
             <span id="duration" class="text-xs">0:00</span>
         </div>
 
-        <span id="track-title" class="truncate ml-2 text-sm md:text-base">Belum ada musik</span>
+        <!-- Track title -->
+        <span id="track-title" class="truncate max-w-[150px] md:max-w-xs text-sm md:text-base">Belum ada musik</span>
+
+        <!-- Volume slider -->
+        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5" class="w-24 h-1 rounded-lg bg-gray-600 accent-purple-500">
     </div>
+
+    <!-- Audio element -->
     <audio id="main-audio" class="hidden"></audio>
 </div>
 
-<!-- JS untuk musik -->
 <script>
 // --- JS untuk musik ---
 const audioPlayer = document.getElementById('audio-player');
@@ -188,12 +193,14 @@ let currentIndex = -1;
 
 const audio = document.getElementById('main-audio');
 const playBtn = document.getElementById('play-btn');
-const prevBtn = document.getElementById('prev-btn');
-const nextBtn = document.getElementById('next-btn');
+const volumeSlider = document.getElementById('volume-slider');
 const titleSpan = document.getElementById('track-title');
 const progressBar = document.getElementById('progress-bar');
 const currentTimeEl = document.getElementById('current-time');
 const durationEl = document.getElementById('duration');
+
+// set default volume
+audio.volume = volumeSlider.value;
 
 function formatTime(sec){
     const m = Math.floor(sec / 60);
@@ -217,15 +224,18 @@ function togglePlay(){
     else { audio.pause(); playBtn.textContent='▶️'; }
 }
 
-function playNext(){ playTrack((currentIndex+1)%tracks.length); }
-function playPrev(){ playTrack((currentIndex-1+tracks.length)%tracks.length); }
+// --- Volume control via slider ---
+volumeSlider.addEventListener('input', ()=>{
+    audio.volume = volumeSlider.value;
+});
 
+// Event listeners
 tracks.forEach((el,i)=> el.addEventListener('click', ()=> playTrack(i)));
 playBtn.addEventListener('click', togglePlay);
-nextBtn.addEventListener('click', playNext);
-prevBtn.addEventListener('click', playPrev);
-audio.addEventListener('ended', playNext);
 
+audio.addEventListener('ended', ()=>{}); // tidak pindah track otomatis
+
+// Update progress bar & times
 audio.addEventListener('timeupdate', ()=>{
     if(audio.duration){
         const percent = (audio.currentTime/audio.duration)*100;

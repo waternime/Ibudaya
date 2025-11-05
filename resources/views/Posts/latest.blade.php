@@ -105,7 +105,8 @@
                 @if ($isMusic)
                     <div class="px-4 py-3 border-b">
                         <button class="music-track w-full px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-                            data-src="{{ asset('storage/' . $filePath) }}" data-title="{{ $post->title }}">
+                            data-src="{{ route('audio.stream', basename($post->file_path)) }}"
+                            data-title="{{ $post->title }}">
                             🎵 Putar Musik
                         </button>
                     </div>
@@ -115,7 +116,7 @@
                 @if ($isVideo)
                     {{-- Wrapper video interaktif --}}
                     <div class="w-full bg-black flex justify-center relative overflow-hidden group rounded-b-lg">
-                        
+
                         {{-- Video --}}
                         <video 
                             preload="metadata" 
@@ -125,8 +126,9 @@
                             loading="lazy"
                             onclick="event.preventDefault(); event.stopPropagation();"
                             controlslist="nodownload"
+                            controls
                         >
-                            <source src="{{ asset('storage/' . $filePath) }}" type="video/mp4">
+                            <source src="{{ route('video.stream', basename($post->file_path)) }}" type="video/mp4">
                             Browser kamu tidak mendukung video.
                         </video>
 

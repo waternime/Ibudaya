@@ -9,6 +9,7 @@ use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\PostManagementController;
+use App\Http\Controllers\VideoController;
 
 Route::get('/', function () {return redirect('/posts/latest');});
 Route::get('/posts/search', [App\Http\Controllers\PostController::class, 'search'])->name('posts.search');
@@ -21,6 +22,8 @@ Route::get('/posts/search', [App\Http\Controllers\PostController::class, 'search
     Route::get('/posts/videos', [PostController::class, 'videos'])->name('posts.videos');
     Route::get('/posts/docs', [PostController::class, 'docs'])->name('posts.docs');
     Route::get('/rules', function () {return view('rules');})->name('rules');
+    Route::get('/video/{filename}', [VideoController::class, 'stream'])->name('video.stream');
+    Route::get('/audio/{filename}', [App\Http\Controllers\AudioController::class, 'stream'])->name('audio.stream');
 
 // Semua route yang butuh login
 Route::middleware('auth')->group(function () {

@@ -47,7 +47,7 @@
                         {{-- Judul postingan klikable --}}
                         @if ($notif->post)
                             <br>
-                            <a href="{{ route('posts.show', $notif->post->id) }}" class="font-semibold text-blue-600 hover:underline">
+                            <a href="{{ route('posts.show', $notif->post->id) }}" class="font-semibold text-red-600 hover:underline">
                                 📌 {{ $notif->post->title }}
                             </a>
                         @endif
