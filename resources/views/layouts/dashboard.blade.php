@@ -591,7 +591,7 @@ toggleBtn.addEventListener('click', () => {
 });
 </script>
 
-{{-- Script Modal --}}
+{{-- Script Modal dan Reply Comment --}}
 <script>
     function openModal(src) {
         const modal = document.getElementById('imageModal');
@@ -617,6 +617,11 @@ toggleBtn.addEventListener('click', () => {
             modal.classList.remove('flex');
         }, 200);
     }
+
+    function toggleElement(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden');
+        }
 </script>
 
 {{-- Script Read More Postingan --}}
