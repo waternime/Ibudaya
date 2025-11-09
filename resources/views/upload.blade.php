@@ -20,8 +20,10 @@
         <!-- Judul -->
         <div class="mb-4">
             <label class="block font-semibold mb-1">Judul</label>
-            <input type="text" name="title" value="{{ old('title') }}" 
-                   class="w-full border p-2 rounded" required>
+            <textarea name="title" rows="2"
+                class="w-full border p-2 rounded bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500
+                    dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700"
+                required>{{ old('title') }}</textarea>
             @error('title')
                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror

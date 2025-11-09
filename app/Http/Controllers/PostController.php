@@ -47,14 +47,27 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title'         => 'required|string|max:5000',
+            // Batas 200 kata, bukan karakter
+            'title' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $wordCount = str_word_count(strip_tags($value));
+                    if ($wordCount > 200) {
+                        $fail('Judul tidak boleh lebih dari 200 kata.');
+                    }
+                },
+            ],
+
             'category'      => 'required|in:images,music,videos,docs',
             'file_category' => 'required|string|max:255',
             'province'      => 'required|string|max:255',
-            'file'          => [
+
+            // Batas 20MB
+            'file' => [
                 'required',
                 'file',
-                'max:10240', // max 10MB
+                'max:20480', // 20MB (20480 KB)
                 function ($attribute, $value, $fail) use ($request) {
                     $mime = $value->getMimeType();
                     $category = $request->category;
@@ -72,7 +85,7 @@ class PostController extends Controller
                             'application/vnd.ms-powerpoint',
                             'application/vnd.openxmlformats-officedocument.presentationml.presentation',
                             'text/plain',
-                        ]
+                        ],
                     ];
 
                     if (!isset($validMimes[$category]) || !in_array($mime, $validMimes[$category])) {
@@ -80,7 +93,9 @@ class PostController extends Controller
                     }
                 }
             ],
-            'cover'         => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+
+            // Cover sekarang dukung webp juga
+            'cover' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
         ]);
 
         $file = $request->file('file');
@@ -97,20 +112,14 @@ class PostController extends Controller
         $docType = null;
         if ($request->category === 'docs') {
             $ext = strtolower($file->getClientOriginalExtension());
-
-            if (in_array($ext, ['pdf'])) {
-                $docType = 'pdf';
-            } elseif (in_array($ext, ['doc', 'docx'])) {
-                $docType = 'word';
-            } elseif (in_array($ext, ['xls', 'xlsx'])) {
-                $docType = 'excel';
-            } elseif (in_array($ext, ['ppt', 'pptx'])) {
-                $docType = 'ppt';
-            } elseif (in_array($ext, ['txt'])) {
-                $docType = 'text';
-            } else {
-                $docType = 'other';
-            }
+            $docType = match ($ext) {
+                'pdf' => 'pdf',
+                'doc', 'docx' => 'word',
+                'xls', 'xlsx' => 'excel',
+                'ppt', 'pptx' => 'ppt',
+                'txt' => 'text',
+                default => 'other',
+            };
         }
 
         // Simpan ke database
