@@ -399,8 +399,8 @@ class PostController extends Controller
             'title'         => 'required|string|max:255',
             'category'      => 'required|string|max:100',
             'file_category' => 'required|string|max:100',
-            'province'      => 'required|string|max:100', // input dari form
-            'file_path'     => 'nullable|file|max:10240', // 10MB
+            'province'      => 'required|string|max:100',
+            'file_path'     => 'nullable|file|max:20480', // 20MB
             'cover_path'    => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
         ]);
 
@@ -408,23 +408,37 @@ class PostController extends Controller
         $post->title         = $request->title;
         $post->category      = $request->category;
         $post->file_category = $request->file_category;
-        $post->province      = $request->province; // <- sesuai input form
+        $post->province      = $request->province;
 
-        // Update file utama jika ada upload baru
+        // === Update file utama jika ada upload baru ===
         if ($request->hasFile('file_path')) {
             if ($post->file_path && Storage::exists('public/' . $post->file_path)) {
                 Storage::delete('public/' . $post->file_path);
             }
-            // Simpan file sesuai kategori budaya
-            $post->file_path = $request->file('file_path')->store($request->file_category, 'public');
+
+            $newFile = $request->file('file_path');
+            $filePath = $newFile->store($request->category, 'public');
+            $post->file_path = $filePath;
+
+            // Kompres otomatis
+            if (in_array($request->category, ['images', 'docs'])) {
+                $this->compressImage($filePath);
+            } elseif ($request->category === 'videos') {
+                $this->compressVideo($filePath);
+            }
         }
 
-        // Update cover jika ada upload baru
+        // === Update cover jika ada upload baru ===
         if ($request->hasFile('cover_path')) {
             if ($post->cover_path && Storage::exists('public/' . $post->cover_path)) {
                 Storage::delete('public/' . $post->cover_path);
             }
-            $post->cover_path = $request->file('cover_path')->store('covers', 'public');
+
+            $coverPath = $request->file('cover_path')->store('covers', 'public');
+            $post->cover_path = $coverPath;
+
+            // Kompres cover juga
+            $this->compressImage($coverPath);
         }
 
         $post->save();
