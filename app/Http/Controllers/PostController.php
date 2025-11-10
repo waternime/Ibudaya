@@ -49,7 +49,6 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // Batas 200 kata
             'title' => [
                 'required',
                 'string',
@@ -65,7 +64,6 @@ class PostController extends Controller
             'file_category' => 'required|string|max:255',
             'province'      => 'required|string|max:255',
 
-            // Batas 20MB
             'file' => [
                 'required',
                 'file',
@@ -100,17 +98,14 @@ class PostController extends Controller
         ]);
 
         $file = $request->file('file');
-
-        // Simpan file utama
         $filePath = $file->store($request->category, 'public');
 
-        // Simpan cover (jika ada)
         $coverPath = $request->hasFile('cover')
             ? $request->file('cover')->store('covers', 'public')
             : null;
 
-        // === Kompres file utama kalau kategori gambar atau dokumen ===
-        if (in_array($request->category, ['images', 'docs'])) {
+        // === Kompres hanya kategori gambar ===
+        if ($request->category === 'images') {
             $this->compressImage($filePath);
             $filePath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $filePath);
         }
@@ -140,7 +135,6 @@ class PostController extends Controller
             };
         }
 
-        // Simpan ke database
         Post::create([
             'title'         => $request->title,
             'file_path'     => $filePath,
@@ -153,7 +147,7 @@ class PostController extends Controller
         ]);
 
         return redirect()->route('posts.latest')
-                        ->with('success', 'Postingan berhasil diupload!');
+            ->with('success', 'Postingan berhasil diupload!');
     }
 
     /**
@@ -162,25 +156,39 @@ class PostController extends Controller
     protected function compressImage($path)
     {
         $fullPath = storage_path('app/public/' . $path);
-
-        if (!file_exists($fullPath)) return;
-
-        $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
-        $img = $manager->read($fullPath);
-
-        // Resize kalau terlalu besar
-        if ($img->width() > 1920) {
-            $img = $img->scaleDown(width: 1920);
+        if (!file_exists($fullPath) || filesize($fullPath) < 100) {
+            \Log::warning("⚠️ File tidak valid atau kosong: {$fullPath}");
+            return;
         }
 
-        // Ubah ke format webp biar lebih kecil
-        $webpPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $fullPath);
+        // Pastikan hanya file gambar yang diproses
+        $mime = mime_content_type($fullPath);
+        if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp', 'image/gif'])) {
+            \Log::info("⏩ Skip kompresi: {$fullPath} (bukan gambar, MIME: {$mime})");
+            return;
+        }
 
-        $img->toWebp(quality: 80)->save($webpPath);
+        try {
+            $manager = new \Intervention\Image\ImageManager(
+                new \Intervention\Image\Drivers\Gd\Driver()
+            );
+            $img = $manager->read($fullPath);
 
-        // Hapus file lama
-        if ($webpPath !== $fullPath) {
-            unlink($fullPath);
+            // Resize kalau terlalu besar
+            if ($img->width() > 1920) {
+                $img = $img->scaleDown(width: 1920);
+            }
+
+            // Simpan ulang ke WebP
+            $webpPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $fullPath);
+            $img->toWebp(quality: 80)->save($webpPath);
+
+            // Hapus file lama
+            if ($webpPath !== $fullPath) {
+                unlink($fullPath);
+            }
+        } catch (\Exception $e) {
+            \Log::error("❌ Gagal kompres gambar: {$fullPath} | " . $e->getMessage());
         }
     }
 
@@ -389,7 +397,7 @@ class PostController extends Controller
     // Update postingan
     public function update(Request $request, Post $post)
     {
-        // Cek kepemilikan post
+        // Pastikan hanya pemilik post yang bisa edit
         if ($post->user_id !== auth()->id()) {
             abort(403, 'Aksi tidak diizinkan.');
         }
@@ -404,43 +412,49 @@ class PostController extends Controller
             'cover_path'    => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
         ]);
 
-        // Update field dasar
+        // Update field teks biasa
         $post->title         = $request->title;
         $post->category      = $request->category;
         $post->file_category = $request->file_category;
         $post->province      = $request->province;
 
-        // === Update file utama jika ada upload baru ===
+        // === Update file utama kalau ada file baru ===
         if ($request->hasFile('file_path')) {
+            // Hapus file lama dulu kalau ada
             if ($post->file_path && Storage::exists('public/' . $post->file_path)) {
                 Storage::delete('public/' . $post->file_path);
             }
 
+            // Simpan file baru
             $newFile = $request->file('file_path');
             $filePath = $newFile->store($request->category, 'public');
             $post->file_path = $filePath;
 
-            // Kompres otomatis
-            if (in_array($request->category, ['images', 'docs'])) {
+            // Kompres & ubah ke webp kalau gambar
+            if ($request->category === 'images') {
                 $this->compressImage($filePath);
-            } elseif ($request->category === 'videos') {
+                $post->file_path = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $filePath);
+            }
+            // Kompres video jika kategori video
+            elseif ($request->category === 'videos') {
                 $this->compressVideo($filePath);
             }
         }
 
         // === Update cover jika ada upload baru ===
         if ($request->hasFile('cover_path')) {
+            // Hapus cover lama
             if ($post->cover_path && Storage::exists('public/' . $post->cover_path)) {
                 Storage::delete('public/' . $post->cover_path);
             }
 
+            // Simpan cover baru
             $coverPath = $request->file('cover_path')->store('covers', 'public');
-            $post->cover_path = $coverPath;
-
-            // Kompres cover juga
             $this->compressImage($coverPath);
+            $post->cover_path = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $coverPath);
         }
 
+        // Simpan ke database
         $post->save();
 
         return redirect()->route('profile')->with('success', 'Postingan berhasil diperbarui.');

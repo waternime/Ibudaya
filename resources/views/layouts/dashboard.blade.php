@@ -261,7 +261,7 @@ document.querySelectorAll('.like-btn, .comment-link').forEach(btn=>{
 });
 </script>
 
-{{-- Script Video Player --}}
+{{-- Script Video Player Umum --}}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.video-player').forEach(video => {
