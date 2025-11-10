@@ -6,6 +6,8 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class PostController extends Controller
 {
@@ -47,7 +49,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // Batas 200 kata, bukan karakter
+            // Batas 200 kata
             'title' => [
                 'required',
                 'string',
@@ -67,7 +69,7 @@ class PostController extends Controller
             'file' => [
                 'required',
                 'file',
-                'max:20480', // 20MB (20480 KB)
+                'max:20480',
                 function ($attribute, $value, $fail) use ($request) {
                     $mime = $value->getMimeType();
                     $category = $request->category;
@@ -94,19 +96,35 @@ class PostController extends Controller
                 }
             ],
 
-            // Cover sekarang dukung webp juga
             'cover' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
         ]);
 
         $file = $request->file('file');
 
-        // Simpan file utama ke folder sesuai kategori
+        // Simpan file utama
         $filePath = $file->store($request->category, 'public');
 
-        // Simpan cover kalau ada
-        $coverPath = $request->hasFile('cover') 
-            ? $request->file('cover')->store('covers', 'public') 
+        // Simpan cover (jika ada)
+        $coverPath = $request->hasFile('cover')
+            ? $request->file('cover')->store('covers', 'public')
             : null;
+
+        // === Kompres file utama kalau kategori gambar atau dokumen ===
+        if (in_array($request->category, ['images', 'docs'])) {
+            $this->compressImage($filePath);
+            $filePath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $filePath);
+        }
+
+        // === Kompres cover kalau ada ===
+        if ($coverPath) {
+            $this->compressImage($coverPath);
+            $coverPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $coverPath);
+        }
+
+        // === Kompres video kalau kategori video ===
+        if ($request->category === 'videos') {
+            $this->compressVideo($filePath);
+        }
 
         // Tentukan doc_type otomatis
         $docType = null;
@@ -136,6 +154,55 @@ class PostController extends Controller
 
         return redirect()->route('posts.latest')
                         ->with('success', 'Postingan berhasil diupload!');
+    }
+
+    /**
+     * Kompres gambar menggunakan Intervention Image v3
+     */
+    protected function compressImage($path)
+    {
+        $fullPath = storage_path('app/public/' . $path);
+
+        if (!file_exists($fullPath)) return;
+
+        $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+        $img = $manager->read($fullPath);
+
+        // Resize kalau terlalu besar
+        if ($img->width() > 1920) {
+            $img = $img->scaleDown(width: 1920);
+        }
+
+        // Ubah ke format webp biar lebih kecil
+        $webpPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $fullPath);
+
+        $img->toWebp(quality: 80)->save($webpPath);
+
+        // Hapus file lama
+        if ($webpPath !== $fullPath) {
+            unlink($fullPath);
+        }
+    }
+
+    /**
+     * Kompres video (jika ffmpeg tersedia)
+     */
+    protected function compressVideo($path)
+    {
+        $ffmpegExists = shell_exec(PHP_OS_FAMILY === 'Windows' ? 'where ffmpeg' : 'which ffmpeg');
+        if (!$ffmpegExists) {
+            \Log::warning("⚠️ ffmpeg tidak ditemukan, skip video: {$path}");
+            return;
+        }
+
+        $fullPath = storage_path('app/public/' . $path);
+        $tempPath = $fullPath . '.tmp.mp4';
+
+        exec("ffmpeg -i \"{$fullPath}\" -vcodec libx264 -crf 28 -preset veryfast -acodec aac -b:a 128k \"{$tempPath}\" -y");
+
+        if (file_exists($tempPath)) {
+            rename($tempPath, $fullPath);
+        }
     }
 
     public function latest(Request $request)
