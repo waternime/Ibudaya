@@ -41,7 +41,7 @@
                     <div class="w-full bg-black flex justify-center relative overflow-hidden group rounded-b-lg">
                         {{-- Video --}}
                         <video 
-                            preload="metadata" 
+                            preload="none" 
                             playsinline 
                             class="video-player max-h-[500px] object-contain w-full rounded-b cursor-pointer transition-transform duration-200 group-hover:scale-[1.02]" 
                             poster="{{ $post->cover_path ? asset('storage/' . $post->cover_path) : '' }}"

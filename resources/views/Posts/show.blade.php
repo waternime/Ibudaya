@@ -82,7 +82,7 @@
 
                 {{-- Video --}}
                 <video 
-                    preload="metadata" 
+                    preload="none" 
                     playsinline 
                     class="video-player max-h-[500px] object-contain w-full rounded-b cursor-pointer transition-transform duration-200 group-hover:scale-[1.02]" 
                     poster="{{ $coverPath ? asset('storage/' . $coverPath) : '' }}"

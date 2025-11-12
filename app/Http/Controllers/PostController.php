@@ -365,6 +365,7 @@ class PostController extends Controller
 
         return response()->file($filePath, [
             'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"',
         ]);
     }
     // Halaman profil / daftar postingan milik user yang login

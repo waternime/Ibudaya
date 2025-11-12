@@ -24,10 +24,12 @@ class AudioController extends Controller
         $headers = [
             'Content-Type' => 'audio/mpeg',
             'Accept-Ranges' => 'bytes',
+            'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
         ];
 
         if ($request->headers->has('Range')) {
-            $range = $request->header('Range'); // misal: "bytes=1000-"
+            $range = $request->header('Range');
             if (preg_match('/bytes=(\d+)-(\d*)/', $range, $matches)) {
                 $start = intval($matches[1]);
                 if (!empty($matches[2])) {
@@ -36,7 +38,7 @@ class AudioController extends Controller
                 $length = $end - $start + 1;
                 $headers['Content-Range'] = "bytes $start-$end/$size";
                 $headers['Content-Length'] = $length;
-                $status = 206; // Partial Content
+                $status = 206;
             } else {
                 $status = 200;
                 $headers['Content-Length'] = $size;
