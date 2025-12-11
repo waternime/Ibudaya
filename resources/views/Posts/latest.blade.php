@@ -22,7 +22,7 @@
                 {{-- Provinsi --}}
                 <select name="province" class="px-3 py-2 border rounded bg-white text-sm w-full">
                     <option value="">📌 Provinsi</option>
-                    @foreach(['Umum','Aceh','Sumatera Utara','Sumatera Barat','Sumatera Selatan','Riau','Kepulauan Riau','Jambi','Bangka Belitung','Bengkulu','Lampung','DKI Jakarta','Jawa Barat','Banten','Jawa Tengah','DI Yogyakarta','Jawa Timur','Bali','Nusa Tenggara Barat','Nusa Tenggara Timur','Kalimantan Barat','Kalimantan Tengah','Kalimantan Selatan','Kalimantan Timur','Kalimantan Utara','Gorontalo','Sulawesi Tengah','Sulawesi Barat','Sulawesi Selatan','Sulawesi Tenggara','Maluku','Maluku Utara','Papua','Papua Barat','Papua Selatan','Papua Tengah','Papua Pegunungan'] as $prov)
+                    @foreach(['Umum','Aceh','Sumatera Utara','Sumatera Barat','Sumatera Selatan','Riau','Kepulauan Riau','Jambi','Bangka Belitung','Bengkulu','Lampung','DKI Jakarta','Jawa Barat','Banten','Jawa Tengah','DI Yogyakarta','Jawa Timur','Bali','Nusa Tenggara Barat','Nusa Tenggara Timur','Kalimantan Barat','Kalimantan Tengah','Kalimantan Selatan','Kalimantan Timur','Kalimantan Utara','Gorontalo','Sulawesi Utara','Sulawesi Tengah','Sulawesi Barat','Sulawesi Selatan','Sulawesi Tenggara','Maluku','Maluku Utara','Papua','Papua Barat','Papua Selatan','Papua Tengah','Papua Pegunungan'] as $prov)
                         <option value="{{ $prov }}" {{ request('province') == $prov ? 'selected' : '' }}>{{ $prov }}</option>
                     @endforeach
                 </select>
