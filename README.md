@@ -60,12 +60,11 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
-## *Catetan*
+## Catetan
 
 - npm run dev
 - npm run build
 - php artisan serve
-
 - php artisan cache:clear
 - php artisan config:clear
 - php artisan route:clear
@@ -80,11 +79,3 @@ Hadi102938
 Akun User
 hadi@gmail.com
 hadi102938
-
-- INSERT INTO migrations (migration, batch) VALUES ('2025_08_29_112304_create_comments_table', 1);
-- ngrok config add-authtoken 353FRTnZcwfcFuh6ALP4H8JG9q6_4AtAfSZ2RUQ2XtySFxD32
-- ngrok http
-
-if (config('app.env') === 'local') {
-            \URL::forceScheme('https');
-        }
